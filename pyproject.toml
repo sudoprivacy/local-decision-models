@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "local-decision-models"
+version = "0.1.0"
+description = "Local decision-model experiments with governed research interfaces"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "fastapi>=0.136,<1",
+  "pydantic>=2.13,<3",
+  "uvicorn>=0.30,<1",
+  "torch>=2.6,<3",
+  "transformers>=5,<6",
+  "peft>=0.18,<1",
+  "psutil>=7,<8",
+  "httpx>=0.28,<1",
+]
+
+[dependency-groups]
+dev = ["pytest>=9,<10", "ruff>=0.14,<1"]
+
+[project.scripts]
+ldm = "ldm.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ldm"]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 110
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]

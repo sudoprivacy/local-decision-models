@@ -1,0 +1,26 @@
+{
+  "retrieved": "2026-11-11",
+  "architecture": {
+    "url": "https://s.shareone.vip/s/ben-di-jue-ce-mo-xing-xun-lian-yu-ai-xie-zuo-jia-gou",
+    "version": "v0.2 / 2026-11-10",
+    "html_sha256": "a7089dade0769907a36a183864c4892d4d8e509fcea3e3b7ef57eb792ac4ff50",
+    "pinned_source": "https://github.com/elfenlieds7/sudowork-physics-rubric/blob/70106f028b601299faf5a3719a6f3b27582ad4c0/deliverables/architecture/local-training.html"
+  },
+  "physics": {
+    "url": "https://s.shareone.vip/s/difficulty-rubric-v2-yang",
+    "version": "v3.4 / 2026-11-09",
+    "html_sha256": "51946d47149c841bfa6bdf1ecfb2db7d734237fe3faf633115ebeb9e93581aae",
+    "pinned_source": "https://github.com/elfenlieds7/sudowork-physics-rubric/blob/aee14007e826ab4cd855af339802ef9cba21a83a/deliverables/rubric/v2.html"
+  },
+  "private_home": {
+    "url": "https://s.shareone.vip/s/sudo-connect-control-private-ai",
+    "version": "v0.2 / 2026-10-30",
+    "html_sha256": "f0ca455fc9720cc0f100ab306e36f61153fc2748d6217e69cdadefb56a0a64be"
+  },
+  "implementation_references": [
+    "https://huggingface.co/docs/peft/package_reference/lora",
+    "https://huggingface.co/docs/transformers/model_doc/qwen3_5",
+    "https://fastapi.tiangolo.com/tutorial/background-tasks/",
+    "https://github.com/Mapika/decider/tree/91b6fa9b94ab6c4dc2c63d3b14d413243b4fffcc"
+  ]
+}
