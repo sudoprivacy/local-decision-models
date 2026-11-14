@@ -151,7 +151,7 @@
       <a href="#next"><small>05</small>下一步</a>
       <a href="#evidence"><small>06</small>证据与维护</a>
     </nav>
-    <div class="side-foot"><strong>源文件在 Git · 展示在 ShareOne</strong>每轮保留配置、结果与判断。<br>2026-11-14 · 配置读取与能力核对</div>
+    <div class="side-foot"><strong>源文件在 Git · 展示在 ShareOne</strong>每轮保留配置、结果与判断。<br>2026-11-14 · 多家庭模拟数据准备</div>
   </aside>
   <main class="main" id="main">
     <div class="topline"><span><span class="mobile-brand">LOCAL DECISIONS / </span>项目记录 · 住宅决策模型</span><div class="top-actions"><span>更新于 2026.11.14</span><button class="print" type="button" id="print-page">打印 / PDF</button></div></div>
@@ -161,7 +161,7 @@
       <div class="statusline"><span class="pill">工程闭环通过</span><span class="pill warn">模型质量待验证</span><span class="pill neutral">实体设备尚未验收</span></div>
       <p class="lead">最终目标：进入一个已安装同类网关的新家庭，在同一局域网内，以尽量少的屋主配合完成接入。当前先用真实的 9B 模型与模拟设备，把训练、保存、重载、决策和动作反馈串起来。</p>
     </header>
-    <div class="metrics" aria-label="本轮学习诊断摘要">
+    <div class="metrics" aria-label="最近一次模型训练摘要：第 2 轮">
       <div class="metric"><strong>64<span>条</span></strong><b>成对合成样例</b><small>训练 / 验证 / 测试：32 / 16 / 16</small></div>
       <div class="metric"><strong>64<span>步</span></strong><b>固定预算训练</b><small>batch 1 · 32 条训练样例，2 轮</small></div>
       <div class="metric"><strong>0</strong><b>重载概率最大差值</b><small>另起进程复核 4 条输出</small></div>
@@ -187,12 +187,18 @@
         </tbody></table></div>
         <p>本地新增配置整理层：身份按网关和节点类型区分；关灯与离线、无移动与无人分别记录；光感档位保留区间；未知场景动作、自动化和成员关系保持缺失。读取失败会使旧配置失效。</p>
         <p class="note"><strong>验证：</strong>住宅相关 72 项测试通过，含混合设备的 TCP 模拟读取、输入边界和隐私输出。真实空网关重新发现并完成只读查询，四类库存均为 0；没有真实设备控制、完整家庭配置或新增模型质量证据。初次测试有 2 项夹具构造错误，修正后通过，原尝试记录保留本地。</p>
-        <p class="note">已请求更新的局域网文档与配置导出说明，尚待回复。<a href="https://github.com/sudoprivacy/local-decision-models/blob/main/docs/yeelight-capabilities.json" target="_blank" rel="noopener">查看能力、来源与待测范围</a>。</p>
+        <p class="note">待确认的是纯局域网读取完整配置的能力，影响新家庭的首次接入流程；模拟、评测和训练可独立继续。<a href="https://github.com/sudoprivacy/local-decision-models/blob/main/docs/yeelight-capabilities.json" target="_blank" rel="noopener">查看能力、来源与待测范围</a>。</p>
+      </article>
+      <article class="panel" style="margin-top:20px" id="synthetic-households"><h3>新增里程碑 · 第 3 轮模拟数据准备</h3><p>6 套模拟家庭配置、16 类对照情境，共 96 对／192 条样例。整户划分为 4 户训练、1 户验证、1 户测试，对应 128／32／32 条；三组均覆盖 8 类动作。</p>
+        <p>每对只改变一个状态或配置项，检查建议是否随之改变：开关与阅读预设、在线与状态时效、请求范围和歧义、移动与照度、手动覆盖、自动化是否启用、缺失配置及明确请求的优先级。模拟执行按各家的阅读参数操作；自定义参数需要对应的模拟批准。</p>
+        <p class="note"><strong>验证：</strong>96 对单项变化检查通过；家庭和重复输入不跨划分；84 项住宅相关测试通过（6.00 秒）。未授权分支不写入，未知阅读配置不补成默认值。本轮未启动模型训练、未生成模型预测，实体控制命令为 0。</p>
+        <p class="note"><strong>局限：</strong>192 条包含成对对照共用的起点，实际为 132 种不同输入；类别分布不均衡，后续应同时报告宏平均和逐类指标。6 户仍共享人工制定的合成规则，不等同真实跨家庭泛化。当前每个隔离场景只有一盏目标灯；多设备、空调、延时和持续时序尚未覆盖。</p>
+        <p class="note">下一步先用真实 tokenizer 检查完整输入和截断，再做固定预算的训练对照；新的测试组不用于选择训练配方。厂商接口确认与这条工作线并行。</p>
       </article>
     </section>
 
     <section id="data" aria-labelledby="data-title">
-      <div class="section-head"><h2 id="data-title"><span>02</span>这一轮，用什么训练</h2><p>数据版本与模型配方分别记录。</p></div>
+      <div class="section-head"><h2 id="data-title"><span>02</span>最近一次训练配方</h2><p>第 2 轮已完成；第 3 轮目前仅准备数据。</p></div>
       <div class="data-grid">
         <article class="panel"><h3>合成数据 · bundle-v2</h3>
           <dl class="facts"><div><dt>来源</dt><dd>人工草拟的合成 fixture，非屋主真实标签</dd></div><div><dt>规模</dt><dd>64 条 / 32 个上下文组，每组 2 个状态反例</dd></div><div><dt>场景范围</dt><dd>一间书房、模拟灯具与传感器状态</dd></div><div><dt>划分</dt><dd>32 训练 · 16 验证 · 16 测试</dd></div><div><dt>输入长度</dt><dd>436–450 token；上限 2,048，逐条确认未截断</dd></div></dl>
@@ -208,7 +214,7 @@
 
     <section id="runs" aria-labelledby="runs-title">
       <div class="section-head"><h2 id="runs-title"><span>03</span>每次尝试，都保留结果</h2><p>2026-11-14 · 含失败、中止和最终对照</p></div>
-      <div class="toolbar" id="run-toolbar"><div class="filters" role="group" aria-label="筛选实验状态"><button class="filter" type="button" data-filter="all" aria-pressed="true">全部</button><button class="filter" type="button" data-filter="complete" aria-pressed="false">已完成</button><button class="filter" type="button" data-filter="incomplete" aria-pressed="false">中止 / 未通过</button></div><span class="result-count" id="run-count" role="status" aria-live="polite">15 条运行记录</span></div>
+      <div class="toolbar" id="run-toolbar"><div class="filters" role="group" aria-label="筛选实验状态"><button class="filter" type="button" data-filter="all" aria-pressed="true">全部</button><button class="filter" type="button" data-filter="complete" aria-pressed="false">已完成</button><button class="filter" type="button" data-filter="incomplete" aria-pressed="false">中止 / 未通过</button></div><span class="result-count" id="run-count" role="status" aria-live="polite">16 条运行记录</span></div>
       <div class="table-wrap"><table class="run-table"><caption>耗时包含模型加载；R09 合并列出一次无效输入尝试的四阶段耗时。编号为阅读顺序。</caption><thead><tr><th scope="col">编号</th><th scope="col">阶段 / 配置</th><th scope="col">结果</th><th scope="col">耗时</th><th scope="col">观察与后续处理</th></tr></thead><tbody id="run-rows">
         <tr data-state="incomplete"><td>R01</td><td><strong>BF16 首次加载</strong><span class="sub">异步加载</span></td><td><span class="pill stop">主动中止</span></td><td>82.03 s</td><td>主机内存与 swap 出现压力，停止本次作业。<span class="sub">原回执仅记录外部终止；原因来自当时的资源观察及操作记录。</span></td></tr>
         <tr data-state="incomplete"><td>R02</td><td><strong>BF16 顺序加载</strong><span class="sub">提高资源保护门槛</span></td><td><span class="pill stop">自动停止</span></td><td>41.29 s</td><td>触及 16 GiB 主机内存预留门槛。<span class="sub">不降低门槛，改用 NF4 量化配方。</span></td></tr>
@@ -224,6 +230,7 @@
 <tr data-state="complete"><td>R13</td><td><strong>修复后评分</strong><span class="sub">bundle-v2 · 完整状态</span></td><td><span class="pill">已完成</span></td><td>81.04 s</td><td>加载 checkpoint-64；固定训练／验证／测试划分分别计分。</td></tr>
 <tr data-state="complete"><td>R14</td><td><strong>修复后新进程重载</strong><span class="sub">bundle-v2 · 完整状态</span></td><td><span class="pill">已完成</span></td><td>46.03 s</td><td>再次加载同一检查点，4 条概率向量差值为 0。</td></tr>
 <tr data-state="complete"><td>R15</td><td><strong>配置输入契约</strong><span class="sub">协议核对 · 未启动训练</span></td><td><span class="pill">工程检查通过</span></td><td>5.01 s<span class="sub">测试执行</span></td><td>72 项住宅相关测试通过；混合模拟设备读取与真实空网关只读复核。<span class="sub">首次 2 项测试夹具错误已修复；完整配置和真实家庭仍待验证。</span></td></tr>
+<tr data-state="complete"><td>R16</td><td><strong>整户隔离的模拟数据</strong><span class="sub">6 套配置 · 96 对 · 未启动训练</span></td><td><span class="pill">数据检查通过</span></td><td>6.00 s<span class="sub">测试执行</span></td><td>192 条按整户分为 128／32／32 条；84 项相关测试通过。<span class="sub">132 种不同输入；无跨划分重复。家庭预设与批准参数单独校验；尚无新模型质量证据。</span></td></tr>
       </tbody></table></div>
       <p class="note">CUDA / NF4 前向与反向预检均通过。CPU 依赖下载曾更换镜像后完成，环境准备不计入上面的模型作业耗时。所有原始日志和未完成回执保留在 Git 外。</p>
     </section>
@@ -249,7 +256,7 @@
     <section id="next" aria-labelledby="next-title">
       <div class="section-head"><h2 id="next-title"><span>05</span>后面的工作节奏</h2><p>时间为规划预算；不承诺指标提升或生产日期。</p></div>
       <div class="table-wrap"><table><caption>一次迭代：明确问题 → 固定数据与预算 → 训练对照 → 归类错误 → 决定下一轮。</caption><thead><tr><th>阶段</th><th>规划节奏</th><th>产出与推进条件</th></tr></thead><tbody><tr><td>输入、标签与学习诊断</td><td>几小时到 1 个工作日／轮</td><td>先确认完整输入和类别覆盖，再确认训练集能学会；失败则查工程与标注。</td></tr><tr><td>泛化、稳定性与对照</td><td>半天到 2 个工作日／轮</td><td>增加独立情境、同义表达与候选顺序扰动；比较规则、未适配、仅决策头、QLoRA，并保留 Jev／Clef 对照。</td></tr><tr><td>概率校准与 RLCD-style</td><td>按实验结果排期</td><td>监督基线稳定后再加入 RLCD-style，同数据、同算力预算比较；阈值只在开发集选择。</td></tr><tr><td>真实办公室及另一家庭</td><td>按周安排，取决于现场准备</td><td>真实状态回传、受控操作、手动回退和新盒子首次接入逐项验收。</td></tr></tbody></table></div>
-      <ol class="tasks"><li><div><h3>补齐系统能力与配置读取</h3><p>核对新版局域网文档或只读导出方式，验证一个已安装环境。清单、情景动作、自动化规则分别验收；无法读取的内容明确标为未知。</p></div><span class="owner">AI 实现 · 接口待确认</span></li><li><div><h3>按能力和边界扩展评测</h3><p>覆盖多设备范围、传感器与时段、渐变与延时、旧动作、离线、手动覆盖和规则冲突。合成案例由 AI 起草，真实偏好由使用者审阅；按家庭／配置组封存新的测试集。</p></div><span class="owner">AI 起草 · 使用者审阅</span></li><li><div><h3>固定新数据后再做训练对照</h3><p>比较规则、未适配、仅决策头与 QLoRA；每轮检验一个假设。保留另一家庭的首次接入和实体控制验收，已有测试组不反复用于选配方。</p></div><span class="owner">输入覆盖先行</span></li></ol>
+      <ol class="tasks"><li><div><h3>继续输入检查与训练对照</h3><p>使用已固定的 6 套模拟配置，先验证完整输入与 token 长度，再比较规则、未适配、仅决策头与 QLoRA。报告逐类、宏平均及成对决策；测试组不参与选配方。</p></div><span class="owner">AI 可独立推进</span></li><li><div><h3>继续扩大能力与时间边界</h3><p>下一阶段补多设备范围、时段、渐变与延时、旧动作和规则冲突。合成案例由 AI 起草，真实偏好由使用者审阅；不把截图配置直接当成正确决策标签。</p></div><span class="owner">AI 起草 · 使用者审阅</span></li><li><div><h3>并行确认新家庭配置读取</h3><p>确认纯 LAN 能否读取情景完整动作、自动化规则及房间／灯组成员；在一个已安装环境逐项验证。无法读取的内容保持未知；此项不阻塞模拟与训练。</p></div><span class="owner">接口确认 · 现场验收</span></li></ol>
       <div class="callout"><strong>当前最有价值的协作</strong>现成官方资料、配置导出路径，以及少数关键使用判断。每家的设备与预设作为动态配置读取；官方文档说明能力，案例说明偏好，二者共同决定评测覆盖范围。</div>
     </section>
 
@@ -264,7 +271,7 @@
       </div>
       <div class="resource-links"><a href="https://github.com/sudoprivacy/local-decision-models/blob/main/docs/home-training-tracker.html" target="_blank" rel="noopener">本页 HTML 源文件<span>docs/home-training-tracker.html</span></a><a href="https://github.com/sudoprivacy/local-decision-models/commits/main/docs/home-training-tracker.html" target="_blank" rel="noopener">页面版本历史<span>在 Git 中查看变更与回退</span></a></div>
     </section>
-    <footer class="footer"><p>LOCAL DECISION MODELS · 住宅试点<br>公开摘要仅记录方法、配置和汇总结果。真实记录、身份映射、逐条标签、模型产物及原始日志保留在 Git 外。</p><p>2026-11-14 / 配置读取与能力核对<br>工程通过 · 质量待验证 · 实机待验收</p></footer>
+    <footer class="footer"><p>LOCAL DECISION MODELS · 住宅试点<br>公开摘要仅记录方法、配置和汇总结果。真实记录、身份映射、逐条标签、模型产物及原始日志保留在 Git 外。</p><p>2026-11-14 / 多家庭模拟数据准备<br>工程通过 · 质量待验证 · 实机待验收</p></footer>
   </main>
   <script>
     const toolbar=document.getElementById('run-toolbar');
