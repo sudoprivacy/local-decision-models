@@ -23,3 +23,11 @@ in docs/sources.json. The physics and private-home adapters are the first pilots
   priority. Keep actual test processes Normal. Never weaken gates to get a pass.
 - Do not change the upstream physics repository, ShareOne pages or other owners'
   data/settings as a side effect of work here.
+- Track the private-home training work in `docs/home-training-tracker.html`.
+  After each validated milestone, append the run/configuration, aggregate result,
+  failed attempts and next steps; keep engineering, quality and device evidence
+  separate. Keep private records and raw artifacts outside the page and Git.
+  The user authorized this repository to be public and this tracker to be shared
+  through ShareOne. Update the same share from its Git remote source; do not
+  create a new share per run. See `docs/home-training-tracker.shareone.json`
+  for the binding after publication. This does not authorize other publications.

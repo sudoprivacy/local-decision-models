@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="住宅决策模型的训练与验证记录：数据版本、实验尝试、工程证据、质量差距和下一步。">
+  <title>住宅决策模型 · 训练追踪</title>
+  <style>
+    :root{--bg:#f5f5f1;--paper:#fff;--ink:#182e2b;--muted:#526560;--line:#dce3dc;--green:#176950;--soft:#e8f3eb;--amber:#87551c;--amber-bg:#fff3dd;--red:#a13d36;--red-bg:#fff0ed;--nav:#17342d;--radius:16px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:30px}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif;font-size:15px;line-height:1.75}a{color:var(--green);text-underline-offset:4px}button,input{font:inherit}button{cursor:pointer}a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #a86c22;outline-offset:4px}code,.mono{font-family:Consolas,monospace;font-size:.88em;overflow-wrap:anywhere}.skip{position:fixed;left:20px;top:-70px;z-index:20;background:white;padding:10px}.skip:focus{top:10px}.sidebar{position:fixed;inset:0 auto 0 0;width:220px;background:var(--nav);color:#e8f1e9;padding:34px 25px;display:flex;flex-direction:column;z-index:5}.brand{font-weight:700;font-size:16px;letter-spacing:.02em}.brand span{display:block;color:#afc7b9;font-size:11px;font-weight:500;letter-spacing:.15em;margin-top:5px}.side-label{color:#afc7b9;text-transform:uppercase;letter-spacing:.16em;font-size:11px;margin:43px 0 12px}.sidebar nav{display:grid;gap:5px}.sidebar nav a{color:#dce9e0;text-decoration:none;padding:9px 12px;border-radius:8px;font-size:14px}.sidebar nav a:hover,.sidebar nav a[aria-current=true]{background:#2a4c3e;color:#fff}.sidebar nav small{color:#b4cabd;margin-right:12px}.side-foot{margin-top:auto;font-size:12px;color:#b4cabd;border-top:1px solid #416052;padding-top:20px}.side-foot strong{color:#f1f6f2;display:block;font-weight:500}.main{margin-left:220px;padding:38px clamp(24px,4.5vw,78px) 70px;max-width:1570px}.topline{display:flex;justify-content:space-between;gap:16px;align-items:center;font-size:12px;color:var(--muted);margin-bottom:38px}.top-actions{display:flex;gap:18px;align-items:center}.print{border:0;background:transparent;color:var(--muted);padding:4px;text-decoration:underline;text-underline-offset:4px}.eyebrow{font-size:11px;letter-spacing:.16em;font-weight:700;color:var(--green);text-transform:uppercase}.hero{max-width:860px}.hero h1{font-size:clamp(29px,3.4vw,45px);letter-spacing:-.04em;line-height:1.25;margin:12px 0 18px;font-weight:650}.hero .lead{font-size:16px;line-height:1.9;color:var(--muted);max-width:780px;margin:15px 0 0}.pill{display:inline-flex;align-items:center;gap:7px;border-radius:30px;padding:4px 11px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--soft);color:var(--green)}.pill:before{content:"";height:6px;width:6px;border-radius:50%;background:currentColor}.pill.warn{background:var(--amber-bg);color:var(--amber)}.pill.stop{background:var(--red-bg);color:var(--red)}.pill.neutral{background:#edf0ec;color:var(--muted)}.statusline{display:flex;gap:9px;flex-wrap:wrap}.metrics{display:grid;grid-template-columns:repeat(4,1fr);margin:32px 0 38px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:23px 0;gap:20px}.metric{border-right:1px solid var(--line);padding-left:20px}.metric:first-child{padding-left:0}.metric:last-child{border:0}.metric strong{display:block;font-weight:600;font-size:32px;line-height:1.25;letter-spacing:-.03em}.metric strong span{font-size:14px;letter-spacing:0;margin-left:6px;font-weight:500}.metric b{display:block;font-size:13px;margin:9px 0 3px;font-weight:600}.metric small{display:block;font-size:12px;color:var(--muted)}section{margin-top:50px;scroll-margin-top:30px}.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:18px;margin-bottom:20px}.section-head h2{font-size:22px;letter-spacing:-.02em;margin:0;font-weight:650}.section-head h2 span{font-family:Consolas,monospace;color:#73857a;font-size:13px;margin-right:12px;font-weight:400}.section-head p{margin:0;font-size:12px;color:var(--muted)}.panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:25px}.two-col{display:grid;grid-template-columns:1.15fr 1fr;gap:20px}.panel h3{margin:0 0 12px;font-size:16px;font-weight:650}.panel p{margin:9px 0;color:var(--muted);font-size:14px}.callout{border-left:3px solid #bb8749;background:var(--amber-bg);padding:16px 20px;border-radius:0 10px 10px 0;font-size:14px;line-height:1.8}.callout strong{display:block;color:#70471b;margin-bottom:4px}.milestones{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}.milestones li{background:white;padding:22px}.milestones .step{font-size:11px;letter-spacing:.09em;color:var(--muted);display:block;margin-bottom:10px}.milestones h3{font-size:15px;margin:10px 0 5px}.milestones p{font-size:13px;color:var(--muted);margin:0}.milestones li.current{background:#eef4ed}.data-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.facts{margin:0}.facts>div{display:grid;grid-template-columns:112px 1fr;border-bottom:1px solid var(--line);padding:11px 0;gap:12px}.facts>div:last-child{border:0}.facts dt{color:var(--muted);font-size:13px}.facts dd{margin:0;font-size:13px;font-weight:550}.note{font-size:12px!important;color:var(--muted);line-height:1.8}.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.chip{background:#f1f4ef;padding:5px 10px;border-radius:6px;font-size:12px}.compact-list{padding-left:19px;margin:10px 0 0;font-size:13px;color:var(--muted)}.compact-list li{margin:8px 0}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff}table{border-collapse:collapse;width:100%;font-size:13px;text-align:left}caption{text-align:left;font-size:12px;color:var(--muted);padding:13px 17px;border-bottom:1px solid var(--line)}th{background:#eef1eb;color:var(--muted);font-size:11px;letter-spacing:.03em;font-weight:600;white-space:nowrap}th,td{padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}td strong{font-weight:600}td .sub{display:block;font-size:12px;color:var(--muted);margin-top:3px}.run-table{min-width:780px}.run-table td:first-child{width:62px;font-family:Consolas,monospace;color:#718277}.run-table td:nth-child(2){width:190px}.run-table td:nth-child(3){width:114px}.run-table td:nth-child(4){white-space:nowrap;width:80px}.toolbar{display:none;justify-content:space-between;align-items:center;gap:15px;margin-bottom:14px;flex-wrap:wrap}.filters{display:flex;gap:6px;flex-wrap:wrap}.filter{font-size:12px;border:1px solid var(--line);border-radius:7px;padding:6px 13px;background:white;color:var(--muted)}.filter[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}.result-count{font-size:12px;color:var(--muted)}[hidden]{display:none!important}.quality-summary{display:flex;gap:35px;align-items:center;margin-bottom:20px}.quality-number{font-size:39px;font-weight:600;letter-spacing:-.03em;line-height:1.1}.quality-number small{display:block;font-size:12px;font-weight:400;letter-spacing:0;margin-top:10px;color:var(--muted)}.arrow{color:#86958b;font-size:24px}.quality-note{background:var(--amber-bg);color:var(--amber);padding:14px 17px;border-radius:9px;font-size:13px;margin:18px 0 0}.proof{list-style:none;margin:0;padding:0}.proof li{padding:13px 0;border-bottom:1px solid var(--line);font-size:13px}.proof li:last-child{border:0}.proof b{font-size:18px;margin-right:8px;color:var(--green);font-weight:600}.proof small{color:var(--muted);font-size:12px;display:block;margin-top:3px}.tasks{list-style:none;counter-reset:task;padding:0;margin:0}.tasks li{display:grid;grid-template-columns:38px 1fr auto;gap:15px;align-items:start;padding:22px 0;border-top:1px solid var(--line);counter-increment:task}.tasks li:before{content:counter(task,decimal-leading-zero);font:13px Consolas,monospace;color:var(--green);padding-top:4px}.tasks h3{font-size:15px;margin:0 0 6px}.tasks p{font-size:13px;color:var(--muted);margin:0;max-width:720px}.tasks .owner{font-size:11px;color:var(--muted);white-space:nowrap;padding-top:3px}details{border-top:1px solid var(--line);padding:15px 0}details:first-child{border-top:0}summary{cursor:pointer;font-size:14px;font-weight:550}details p,details ul{font-size:13px;color:var(--muted)}details[open] summary{margin-bottom:12px}.resource-links{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:18px 0}.resource-links a{display:block;border:1px solid var(--line);background:white;padding:14px 17px;border-radius:10px;text-decoration:none;font-size:13px}.resource-links a span{display:block;color:var(--muted);font-size:11px;margin-top:4px}.footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:25px;font-size:11px;color:var(--muted)}.footer p{margin:0;max-width:660px}.update-note{background:#eaf1e7;padding:16px 20px;border-radius:10px;font-size:13px;margin-top:20px}.update-note strong{display:block;margin-bottom:4px}.mobile-brand{display:none}
+    @media(min-width:1700px){.main{margin-left:calc(220px + (100vw - 1570px)/2)}}
+    @media(max-width:1000px){.sidebar{width:185px;padding:28px 18px}.main{margin-left:185px;padding:30px 25px 50px}.two-col,.data-grid{grid-template-columns:1fr}.metrics{gap:10px}.metric{padding-left:12px}.milestones{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:700px){html{scroll-padding-top:68px}.sidebar{position:sticky;inset:0 0 auto;width:100%;padding:10px 16px;display:block}.brand,.side-label,.side-foot{display:none}.sidebar nav{display:flex;overflow-x:auto;gap:2px}.sidebar nav a{white-space:nowrap;padding:7px 10px;font-size:12px}.sidebar nav small{display:none}.main{margin:0;padding:22px 18px 40px}.topline{font-size:11px;gap:8px;align-items:start;margin-bottom:28px}.top-actions{gap:12px}.mobile-brand{display:inline}.hero h1{font-size:31px}.hero .lead{font-size:14px}.metrics{grid-template-columns:1fr 1fr;padding:0;gap:0;margin:25px 0 30px}.metric,.metric:first-child{padding:18px 8px;border-right:0;border-bottom:1px solid var(--line)}.metric:nth-child(n+3){border-bottom:0}.metric strong{font-size:28px}.metric b{font-size:12px}.metric small{font-size:11px}.section-head{display:block}.section-head h2{font-size:21px}.section-head p{margin-top:7px}.panel{padding:20px}.milestones li{padding:18px}.milestones h3{font-size:14px}.milestones p{font-size:12px}.facts>div{grid-template-columns:90px 1fr}.tasks li{grid-template-columns:29px 1fr;gap:10px}.tasks .owner{grid-column:2}.resource-links{grid-template-columns:1fr}.footer{display:block}.footer p+p{margin-top:12px}section{scroll-margin-top:70px;margin-top:37px}.quality-summary{gap:23px}.quality-number{font-size:34px}}
+    @media(max-width:700px){.topline{flex-wrap:wrap}.topline>span{flex:1 1 100%}.top-actions{width:100%;justify-content:space-between;white-space:nowrap}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+    @media print{.sidebar,.top-actions,.toolbar,.skip{display:none!important}.main{margin:0;max-width:none;padding:0}.hero h1{font-size:30px}body{background:white;font-size:11px}.panel,.table-wrap,.milestones{break-inside:avoid}.table-wrap{overflow:visible}.run-table{min-width:0}section{margin-top:26px}a{color:inherit}.footer{margin-top:20px}details>div{display:block}.metrics{margin:20px 0}button{display:none}}
+  </style>
+</head>
+<body data-shareone-layout="document">
+  <a class="skip" href="#main">跳到正文</a>
+  <aside class="sidebar" aria-label="页面目录">
+    <div class="brand">LOCAL DECISIONS<span>RESEARCH · BUILD · VERIFY</span></div>
+    <p class="side-label">住宅试点 / Pilot 01</p>
+    <nav>
+      <a href="#overview" aria-current="true"><small>01</small>当前进度</a>
+      <a href="#data"><small>02</small>数据与配方</a>
+      <a href="#runs"><small>03</small>实验记录</a>
+      <a href="#results"><small>04</small>结果与边界</a>
+      <a href="#next"><small>05</small>下一步</a>
+      <a href="#evidence"><small>06</small>证据与维护</a>
+    </nav>
+    <div class="side-foot"><strong>源文件在 Git · 展示在 ShareOne</strong>每轮保留配置、结果与判断。<br>2026-11-14 · 第 1 轮工程试跑</div>
+  </aside>
+  <main class="main" id="main">
+    <div class="topline"><span><span class="mobile-brand">LOCAL DECISIONS / </span>项目记录 · 住宅决策模型</span><div class="top-actions"><span>更新于 2026.11.14</span><button class="print" type="button" id="print-page">打印 / PDF</button></div></div>
+    <header class="hero">
+      <div class="eyebrow">Training journal / 001</div>
+      <h1>住宅决策模型<br>训练、结果与下一步。</h1>
+      <div class="statusline"><span class="pill">工程闭环通过</span><span class="pill warn">模型质量待验证</span><span class="pill neutral">实体设备尚未验收</span></div>
+      <p class="lead">最终目标：进入一个已安装同类网关的新家庭，在同一局域网内，以尽量少的屋主配合完成接入。当前先用真实的 9B 模型与模拟设备，把训练、保存、重载、决策和动作反馈串起来。</p>
+    </header>
+    <div class="metrics" aria-label="本轮工程试跑摘要">
+      <div class="metric"><strong>32<span>条</span></strong><b>草拟合成样例</b><small>训练 / 验证 / 测试：24 / 4 / 4</small></div>
+      <div class="metric"><strong>4<span>步</span></strong><b>有限训练更新</b><small>batch 1 · 实际消费 4 个样本</small></div>
+      <div class="metric"><strong>0</strong><b>重载概率最大差值</b><small>另起进程复核 4 条输出</small></div>
+      <div class="metric"><strong>0</strong><b>实体控制命令</b><small>所有动作只在本机模拟网关执行</small></div>
+    </div>
+
+    <section id="overview" aria-labelledby="overview-title">
+      <div class="section-head"><h2 id="overview-title"><span>01</span>现在走到哪一步</h2><p>以验收证据推进，不以训练步数代替完成度。</p></div>
+      <ol class="milestones">
+        <li><span class="step">M01 · 环境与协议</span><span class="pill">已验证</span><h3>接入与模拟环境</h3><p>空网关可自动发现、只读查询；本机协议模拟器可控制与读回。</p></li>
+        <li><span class="step">M02 · 目标模型链路</span><span class="pill">已验证</span><h3>9B 训练 → 重载 → 回放</h3><p>Spark 上 QLoRA 更新成功；检查点与决策头保存并重载。</p></li>
+        <li class="current"><span class="step">M03 · 当前下一步</span><span class="pill warn">待开展</span><h3>正式场景与标签审阅</h3><p>扩充独立场景、成对反例与状态变化，先固定评测划分。</p></li>
+        <li><span class="step">M04 · 业务效果</span><span class="pill neutral">待验证</span><h3>训练、对照与弃权评测</h3><p>比较规则、仅决策头与 QLoRA；检查正确动作、澄清和危险误判。</p></li>
+        <li><span class="step">M05 · 真实环境</span><span class="pill neutral">待准备</span><h3>办公室真实设备验收</h3><p>确认同 LAN 常开承载机及设备清单，再验证受控动作与反馈。</p></li>
+        <li><span class="step">M06 · 另一家庭</span><span class="pill neutral">待验收</span><h3>首次接入与日常体验</h3><p>用另一台盒子验证首次接入、家庭权限、人工操作和模型停机回退。</p></li>
+      </ol>
+      <div class="update-note"><strong>接入边界也纳入追踪</strong>当前可行路径是屋主在原有 App 中开启一次“第三方控制”，之后自动局域网连接，无需 MCP 扫码或云端登录。新家庭零 App、零交互接入仍未验证；本试点历史配置不替代另一家庭验收。</div>
+    </section>
+
+    <section id="data" aria-labelledby="data-title">
+      <div class="section-head"><h2 id="data-title"><span>02</span>这一轮，用什么训练</h2><p>数据版本与模型配方分别记录。</p></div>
+      <div class="data-grid">
+        <article class="panel"><h3>合成数据 · bundle-v1</h3>
+          <dl class="facts"><div><dt>来源</dt><dd>人工草拟的合成 fixture，非屋主真实标签</dd></div><div><dt>规模</dt><dd>32 条 / 8 个来源场景组</dd></div><div><dt>场景范围</dt><dd>一间书房、模拟灯具与传感器状态</dd></div><div><dt>划分</dt><dd>24 训练 · 4 验证 · 4 测试</dd></div><div><dt>输入长度</dt><dd>最长 260 token；上限 2,048，不静默截断</dd></div></dl>
+          <p class="note">同源样例整体划分；不同来源里相同输入先关联成组。只改变候选顺序的样例不会跨训练与留出集。标签仅用于监督和评测，不进入模型推理提示。</p>
+          <div class="chips" aria-label="八个候选动作"><span class="chip">开灯</span><span class="chip">关灯</span><span class="chip">阅读预设</span><span class="chip">保持状态</span><span class="chip">请求澄清</span><span class="chip">人工回退</span><span class="chip">不支持</span><span class="chip">刷新状态</span></div>
+        </article>
+        <article class="panel"><h3>模型配方 · QLoRA 工程试跑</h3>
+          <dl class="facts"><div><dt>底座</dt><dd>Qwen/Qwen3.5-9B-Base</dd></div><div><dt>决策方式</dt><dd>ms-swift 通用决策头，一次前向输出候选概率</dd></div><div><dt>精度</dt><dd>NF4 双重量化底座 / BF16 计算</dd></div><div><dt>LoRA</dt><dd>rank 8 · alpha 16 · dropout 0</dd></div><div><dt>目标模块</dt><dd><code>q_proj / v_proj</code>；视觉分支冻结</dd></div><div><dt>训练预算</dt><dd>4 步 · batch 1 · 学习率 0.0001 · seed 7</dd></div><div><dt>设备</dt><dd>DGX Spark · NVIDIA GB10</dd></div></dl>
+          <p class="note">本轮使用 Base 模型新接决策头；不是 Microsoft-Decision-1 已训练权重，也不表示复现其完整训练方法。</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="runs" aria-labelledby="runs-title">
+      <div class="section-head"><h2 id="runs-title"><span>03</span>每次尝试，都保留结果</h2><p>2026-11-14 · 含失败、中止和最终对照</p></div>
+      <div class="toolbar" id="run-toolbar"><div class="filters" role="group" aria-label="筛选实验状态"><button class="filter" type="button" data-filter="all" aria-pressed="true">全部</button><button class="filter" type="button" data-filter="complete" aria-pressed="false">已完成</button><button class="filter" type="button" data-filter="incomplete" aria-pressed="false">中止 / 失败</button></div><span class="result-count" id="run-count" role="status" aria-live="polite">8 条运行记录</span></div>
+      <div class="table-wrap"><table class="run-table"><caption>耗时为单次作业墙钟时间，包含模型加载；编号为本页阅读顺序。</caption><thead><tr><th scope="col">编号</th><th scope="col">阶段 / 配置</th><th scope="col">结果</th><th scope="col">耗时</th><th scope="col">观察与后续处理</th></tr></thead><tbody id="run-rows">
+        <tr data-state="incomplete"><td>R01</td><td><strong>BF16 首次加载</strong><span class="sub">异步加载</span></td><td><span class="pill stop">主动中止</span></td><td>82.03 s</td><td>主机内存与 swap 出现压力，停止本次作业。<span class="sub">原回执仅记录外部终止；原因来自当时的资源观察及操作记录。</span></td></tr>
+        <tr data-state="incomplete"><td>R02</td><td><strong>BF16 顺序加载</strong><span class="sub">提高资源保护门槛</span></td><td><span class="pill stop">自动停止</span></td><td>41.29 s</td><td>触及 16 GiB 主机内存预留门槛。<span class="sub">不降低门槛，改用 NF4 量化配方。</span></td></tr>
+        <tr data-state="incomplete"><td>R03</td><td><strong>NF4 加载与注册</strong><span class="sub">QLoRA 兼容性</span></td><td><span class="pill stop">未完成</span></td><td>56.03 s</td><td>权重加载后遇到多模态模型注册兼容问题。<span class="sub">修正插件的多模态元数据，再独立重试。</span></td></tr>
+        <tr data-state="complete"><td>R04</td><td><strong>首次完整评分</strong><span class="sub">NF4 · 无 adapter</span></td><td><span class="pill">已完成</span></td><td>69.04 s</td><td>完成全部 32 条评分。<span class="sub">随后统一视觉分支的量化排除设置；最终基线以 R06 为准。</span></td></tr>
+        <tr data-state="complete"><td>R05</td><td><strong>QLoRA 训练</strong><span class="sub">24 条训练池 / 4 步</span></td><td><span class="pill">已完成</span></td><td>66.03 s</td><td>16 个 LoRA B 矩阵实际更新，保存 adapter 与独立决策头。<span class="sub">4 个样本更新；没有训练完全部 24 条。</span></td></tr>
+        <tr data-state="complete"><td>R06</td><td><strong>最终基线</strong><span class="sub">统一配方 · 无 adapter</span></td><td><span class="pill">已完成</span></td><td>63.04 s</td><td>重新评分原始底座的 32 条输入。<span class="sub">虽然执行于训练之后，未加载训练产物，仍是未适配基线。</span></td></tr>
+        <tr data-state="complete"><td>R07</td><td><strong>训练后评分</strong><span class="sub">加载 checkpoint-4</span></td><td><span class="pill">已完成</span></td><td>64.03 s</td><td>32 条真实模型概率进入 mock 回放。<span class="sub">保留错误选择；不使用 gold 标签纠正模型动作。</span></td></tr>
+        <tr data-state="complete"><td>R08</td><td><strong>新进程重载</strong><span class="sub">再次加载同一检查点</span></td><td><span class="pill">已完成</span></td><td>47.03 s</td><td>4 条概率向量与 R07 逐值一致。<span class="sub">检查点验证与本地回放均通过。</span></td></tr>
+      </tbody></table></div>
+      <p class="note">CUDA / NF4 前向与反向预检均通过。CPU 依赖下载曾更换镜像后完成，环境准备不计入上面的模型作业耗时。所有原始日志和未完成回执保留在 Git 外。</p>
+    </section>
+
+    <section id="results" aria-labelledby="results-title">
+      <div class="section-head"><h2 id="results-title"><span>04</span>工程跑通，不代表模型练好了</h2><p>质量结论与执行证据分开看。</p></div>
+      <div class="two-col">
+        <article class="panel"><h3>动作判断 · 尚未改善</h3><div class="quality-summary"><div class="quality-number">4 / 32<small>未适配基线</small></div><span class="arrow" aria-hidden="true">→</span><div class="quality-number">4 / 32<small>4 步训练后</small></div></div>
+          <div class="table-wrap"><table><caption>原始 argmax 正确数；先计分，再应用澄清等执行规则。</caption><thead><tr><th scope="col">数据分组</th><th scope="col">基线</th><th scope="col">训练后</th></tr></thead><tbody><tr><td>训练组</td><td>2 / 24</td><td>2 / 24</td></tr><tr><td>验证组</td><td>1 / 4</td><td>1 / 4</td></tr><tr><td>测试组</td><td>1 / 4</td><td>1 / 4</td></tr></tbody></table></div>
+          <p class="quality-note">这是一轮工程试跑。数据极少且完全合成，不能据此判断真实家庭泛化能力、概率校准或生产可用性。</p>
+        </article>
+        <article class="panel"><h3>已经验证的工程事实</h3><ul class="proof"><li><b>16</b>个 LoRA B 矩阵发生更新<small>不是只生成了检查点目录。</small></li><li><b>0.0231</b>训练前后最大概率变化<small>概率确有变化，argmax 正确数尚未改善。</small></li><li><b>0</b>新进程重载的最大概率差<small>比较 4 条；adapter 与决策头都重新加载。</small></li><li><b>353 ms</b>训练后单条评分中位耗时<small>32 条本次观测；不含冷加载，不是性能承诺。</small></li><li><b>70</b>项本地离线测试通过<small>另有 Spark 实跑回执；不把离线测试等同实机验收。</small></li></ul></article>
+      </div>
+      <div class="panel" style="margin-top:20px"><h3>模型输出 → 权限检查 → 模拟动作 → 读回</h3><p>本轮 32 条回放：<strong>9 次模拟写入</strong>、17 次澄清、2 次状态已满足、2 次离线回退、2 次状态刷新。模拟写入均读回一致；未授权分支无写入。回放成功表示执行链路一致，不表示动作语义正确。</p><p class="note">具体动作的批准由合成测试上下文提供。真实屋主授权、角色与空间权限必须由服务端独立核验；模型概率不授予控制权。低于既有 0.5 阈值或并列时澄清，但这一阈值尚未做业务校准。</p></div>
+    </section>
+
+    <section id="next" aria-labelledby="next-title">
+      <div class="section-head"><h2 id="next-title"><span>05</span>下一轮，先把问题和答案定义好</h2><p>计划项，尚未执行。</p></div>
+      <ol class="tasks"><li><div><h3>审阅场景与正确动作</h3><p>确认书房的开关灯、阅读预设、状态不明、离线、歧义需求和越界请求。标出应澄清、应保持和应人工处理的情况；确定哪些规则属于家庭偏好。</p></div><span class="owner">AI 起草 · 用户确认规则</span></li><li><div><h3>扩充独立场景，并冻结划分</h3><p>加入“同一句话、不同状态”的成对反例、状态变化和候选顺序扰动。保留来源组，检查近重复；先固定开发与留出集，再开始质量调试。</p></div><span class="owner">AI 实现与检查</span></li><li><div><h3>做有对照的正式训练</h3><p>比较确定性规则、未适配模型、仅决策头和决策头＋QLoRA。记录正确动作、澄清/弃权、严重误判、资源与延迟；正式阈值待使用方确认。</p></div><span class="owner">AI 训练与评测</span></li><li><div><h3>再进入办公室真实环境</h3><p>先明确同一 LAN 的常开承载机、设备清单与授权范围，再验证真实灯具和人工回退。另一家庭的首次接入另做验收。</p></div><span class="owner">现场条件待确认</span></li></ol>
+      <div class="callout"><strong>当前最有价值的人工输入</strong>少量真实使用情境及“这种情况下应该怎么做”的判断。模拟数据生成、格式转换、训练和回执整理由 AI 完成，暂时不需要准备实体灯具。</div>
+    </section>
+
+    <section id="evidence" aria-labelledby="evidence-title">
+      <div class="section-head"><h2 id="evidence-title"><span>06</span>可追溯，也方便接着做</h2><p>此页是摘要；原始产物留在本地运行目录。</p></div>
+      <div class="panel">
+        <details><summary>固定版本与内容摘要</summary><div><dl class="facts"><div><dt>模型源</dt><dd>Qwen/Qwen3.5-9B-Base / 官方 ModelScope</dd></div><div><dt>模型 revision</dt><dd><code>f3507de96f70f0056e2d441fe4cc6e9ded117382</code></dd></div><div><dt>bundle SHA-256</dt><dd><code>68af450b9f301b5ebfdf91ebfb448f8261dbd3b2315ac7e5d6589139277fc9f1</code></dd></div><div><dt>adapter SHA-256</dt><dd><code>960cfac6276ec52e88bf378297c437c3cc0b681f5cdeb1f4325bfb1a398d5d47</code></dd></div></dl><p>权重下载逐文件验证大小和哈希。摘要用于对应本次产物，不在页面提供权重、逐条数据或身份映射。</p></div></details>
+        <details><summary>环境、资源预算与已知限制</summary><div><p>Python 3.12 · PyTorch 2.11.0+cu130 · Transformers 5.8.1 · ms-swift 4.6.1 · PEFT 0.20.0 · bitsandbytes 0.49.2。GPU 实验环境独立于仓库 CPU 依赖锁。</p><ul><li>每作业单 CPU 线程、nice 10、最多 900 秒；实际测试进程保持普通优先级。</li><li>启动需至少 32 GiB 可用内存；运行保留 16 GiB；新增 swap 超过 512 MiB 即停止。</li><li>最终 NF4 作业最低可用内存约 16.9 GiB，最大单作业新增 swap 约 23.2 MiB；不包含先前 BF16 尝试造成的 swap 增量。</li><li>训练后评分 CUDA peak allocated 约 11.76 GiB，reserved 约 11.91 GiB。这不是整机内存占用。</li><li>Spark 实跑不替代 H200 部署验收。此配方尚未注册到研究 HTTP API 或生产控制入口。</li></ul></div></details>
+        <details><summary>4 个训练 step 的 loss，该怎么理解</summary><div><p class="mono">3.2940 · 2.4865 · 2.1092 · 1.5764</p><p>数值均有限。但每一步消费不同样本，不能把这四个数的下降视为质量改善证据。应以固定留出集、规则基线和错误类型比较判断下一轮效果。</p></div></details>
+        <details><summary>证据文件与后续更新规则</summary><div><p>摘要对应本地 <code>pilot-receipt.json</code>、<code>checkpoint-verification.json</code>、各阶段 <code>*-job.json</code>、<code>replay-receipt.json</code> 与保留的失败尝试。本页不包含机器地址、账号、逐条标签、原始错误或下载入口。</p><ol class="compact-list"><li>每轮新增运行记录，保留失败及中止原因，不覆盖旧轮结论。</li><li>记录数据版本、划分、模型 revision、配方、资源预算、评测和未完成项。</li><li>新结果必须来自回执；明确区分工程证据、业务质量和实体设备验收。</li><li>修改本 repo 的 <code>docs/home-training-tracker.html</code> 并提交 Git，再刷新原 ShareOne 链接。页面日期表示这份快照的更新时间，不表示训练仍在运行。</li></ol></div></details>
+      </div>
+      <div class="resource-links"><a href="https://github.com/sudoprivacy/local-decision-models/blob/main/docs/home-training-tracker.html" target="_blank" rel="noopener">本页 HTML 源文件<span>docs/home-training-tracker.html</span></a><a href="https://github.com/sudoprivacy/local-decision-models/commits/main/docs/home-training-tracker.html" target="_blank" rel="noopener">页面版本历史<span>在 Git 中查看变更与回退</span></a></div>
+    </section>
+    <footer class="footer"><p>LOCAL DECISION MODELS · 住宅试点<br>公开摘要仅记录方法、配置和汇总结果。真实记录、身份映射、逐条标签、模型产物及原始日志保留在 Git 外。</p><p>2026-11-14 / 第一轮工程试跑<br>工程通过 · 质量待验证 · 实机待验收</p></footer>
+  </main>
+  <script>
+    const toolbar=document.getElementById('run-toolbar');
+    const rows=[...document.querySelectorAll('#run-rows tr')];
+    const filters=[...document.querySelectorAll('[data-filter]')];
+    toolbar.style.display='flex';
+    filters.forEach(button=>button.addEventListener('click',()=>{
+      const selected=button.dataset.filter;
+      filters.forEach(item=>item.setAttribute('aria-pressed',String(item===button)));
+      rows.forEach(row=>{row.hidden=selected!=='all'&&row.dataset.state!==selected});
+      document.getElementById('run-count').textContent=rows.filter(row=>!row.hidden).length+' / '+rows.length+' 条运行记录';
+    }));
+    const links=[...document.querySelectorAll('.sidebar nav a')];
+    const sections=[...document.querySelectorAll('main section')];
+    let scrollPending=false;
+    function markCurrent(){
+      let current=sections[0].id;
+      sections.forEach(section=>{if(section.getBoundingClientRect().top<=150)current=section.id});
+      links.forEach(link=>link.setAttribute('aria-current',String(link.hash==='#'+current)));
+      scrollPending=false;
+    }
+    window.addEventListener('scroll',()=>{if(!scrollPending){scrollPending=true;requestAnimationFrame(markCurrent)}},{passive:true});
+    window.addEventListener('resize',markCurrent);markCurrent();
+    document.getElementById('print-page').addEventListener('click',()=>window.print());
+    let printState;
+    window.addEventListener('beforeprint',()=>{
+      printState={rows:rows.map(row=>row.hidden),details:[...document.querySelectorAll('details')].map(item=>item.open)};
+      rows.forEach(row=>{row.hidden=false});document.querySelectorAll('details').forEach(item=>{item.open=true});
+    });
+    window.addEventListener('afterprint',()=>{
+      if(!printState)return;
+      rows.forEach((row,index)=>{row.hidden=printState.rows[index]});document.querySelectorAll('details').forEach((item,index)=>{item.open=printState.details[index]});
+    });
+  </script>
+</body>
+</html>
