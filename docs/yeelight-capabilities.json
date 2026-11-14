@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-11-14",
+  "scope": "Existing installed homes; read-only configuration acquisition before broader decision-model training.",
+  "sources": [
+    {
+      "id": "pro_lan_v2_22",
+      "title": "Yeelight Pro局域网协议",
+      "version": "2.22",
+      "document_date": "2023-08-25",
+      "origin": "Owner-supplied PDF; original retained outside Git",
+      "sections": {"methods": "p.4", "node_types": "p.6", "push_updates": "pp.6-8", "node_query": "pp.12-15", "group_room_query": "p.16", "scene_query": "p.17", "properties": "pp.19-25"}
+    },
+    {
+      "id": "official_cli",
+      "repository": "https://github.com/Yeelight/yeelight-home",
+      "revision": "b666fea5984a0f06e48a34abccd8aca6b311967e",
+      "collection_source": "internal/api/metadata_collection_readonly.go",
+      "detail_source": "internal/api/metadata_detail_readonly.go",
+      "detail_tests": "internal/api/metadata_detail_readonly_test.go",
+      "evidence_level": "official_source_inspection_only; cloud APIs not called with a real account"
+    }
+  ],
+  "capabilities": [
+    {"id": "inventory", "lan": "gateway_get.node, gateway_get.room, gateway_get.group, gateway_get.scene", "local_implementation": "read_only", "verification": "real empty gateway plus synthetic populated loopback; installed populated home pending"},
+    {"id": "scene_actions", "lan": "not defined in reviewed v2.22; name/id/state only", "cloud_cli": "scene.detail.get", "http": "POST /v1/scene/{sceneId}/r/detail", "requires": "normal account authorization; actual project access unverified", "local_implementation": "actions=null; never infer scope or settings from scene name"},
+    {"id": "automation_rules", "lan": "not defined in reviewed v2.22", "cloud_cli": "automation.list, automation.detail.get", "http": "POST /v1/automations/r/list; GET /v2/thing/manage/house/{houseId}/automation/{automationId}/r/info", "requires": "normal account authorization; actual project access unverified", "local_implementation": "rules=null; missing is not an empty automation list"},
+    {"id": "room_and_group_membership", "lan": "reviewed query examples do not establish member relations", "local_implementation": "membership=null; names and matching numeric IDs do not establish membership", "next_check": "newer LAN contract or authorized configuration export"},
+    {"id": "state_and_events", "lan": "gateway_post.prop, gateway_post.event", "local_implementation": "one-shot inventory only; no persistent event receiver", "limits": "snapshot receipt time is not device event time or proof of fresh state"},
+    {"id": "type_catalog", "lan": "documented product types include lighting, curtain, relay, HVAC, panel and sensor classes", "local_implementation": "recognize type names; normalize a subset of light/curtain/motion/contact/climate state; report unmapped fields", "limits": "type recognition does not grant control or prove all features supported by a specific product/firmware"},
+    {"id": "light_level", "lan": "pt=134 level 1..8 reports bands; level 4 is 150..250 lux", "local_implementation": "preserve band and unknown exact lux", "limits": "a band crossing a requested threshold cannot decide the threshold; new exact-lux properties need separate documentation"},
+    {"id": "authorization", "lan": "third-party LAN control must already be accessible", "local_implementation": "no cloud sign-in fallback or live write path", "limits": "gateway discovery, configuration and model confidence grant no control permission"}
+  ],
+  "configuration_contract": {
+    "implementation": "src/ldm/home_profile.py",
+    "integration": "home-connect stores profile.private.json per gateway outside Git",
+    "identity": "connection ID + node type + exact 64-bit integer ID",
+    "unknown_values": "null; do not substitute zero, false, empty rules or guessed settings",
+    "privacy": "private rows stay in runtime storage; console includes aggregate coverage only",
+    "freshness": "sequential snapshot, not atomic; state_fresh stays null",
+    "training_ready": false,
+    "control_permission_granted": false
+  },
+  "coverage": {
+    "implemented_contract_tests": [
+      "mixed inventory over a real loopback socket without writes",
+      "online versus light power; no motion versus occupancy",
+      "quantized illuminance versus exact lux",
+      "curtain position without an assumed opening direction",
+      "unmapped HVAC channels and unknown product types remain explicit",
+      "temperature unit conversion and 64-bit identity preservation",
+      "separate gateway and node-type namespaces",
+      "scene active/name is not a complete action definition",
+      "unknown scene extensions do not create executable actions",
+      "missing collections versus observed empty collections",
+      "invalid values, duplicate IDs and malformed rows",
+      "private file storage and aggregate-only console output"
+    ],
+    "decision_quality_cases_to_build_after_configuration_contract": [
+      "lighting power, dimming, color temperature and per-home presets",
+      "room/group/scene scope and multi-target partial failures",
+      "motion, occupancy, ambient light and time conditions",
+      "light fade duration versus execution delay versus absence timeout",
+      "unsupported or legacy condition/action definitions",
+      "manual override and conflicts with existing automations",
+      "stale state, reconnect, missing events and offline device",
+      "curtain/HVAC channel semantics only after supported mappings are verified",
+      "held-out household/configuration groups and explicit owner preferences"
+    ],
+    "not_claimed": ["full Yeelight feature coverage", "real-home decision quality", "complete configuration export", "new-home zero-touch onboarding", "physical device control acceptance"]
+  },
+  "next_steps": [
+    "Obtain newer LAN documents or confirmation of configuration export coverage.",
+    "Read one authorized installed environment; keep real identity mappings and configuration outside Git.",
+    "Define supported actions from verified configuration, with unknown/unsupported/clarify alternatives.",
+    "Expand synthetic decision fixtures from capabilities and boundary conditions, then review real preference labels.",
+    "Keep new held-out household/configuration groups sealed before comparing rule, head-only and QLoRA baselines."
+  ]
+}
