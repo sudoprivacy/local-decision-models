@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "source_file": "docs/home-training-tracker.html",
+  "repository": "sudoprivacy/local-decision-models",
+  "branch": "main",
+  "publication_mode": "remote_url_follow_branch",
+  "remote_url": "https://raw.githubusercontent.com/sudoprivacy/local-decision-models/main/docs/home-training-tracker.html",
+  "share_id": "fDFxLIs6PfhSoQDq",
+  "share_url": "https://s.shareone.vip/s/home-training-tracker",
+  "published_on": "2026-11-14",
+  "initial_content_sha256": "528293a870b09856d01959e0d0fbe93c60be65807ac90949a606c357d44bb7ab",
+  "allow_comments": false,
+  "allow_data": false,
+  "viewer_scope": "link",
+  "update_policy": "Edit the source HTML, commit and push to main, then refresh this same share. Verify downloaded bytes against the source. Never create a new share for each run.",
+  "content_policy": "Reviewed aggregate evidence only. Keep real records, row-level labels, identity mappings, raw errors, model weights and checkpoints outside Git and ShareOne."
+}
