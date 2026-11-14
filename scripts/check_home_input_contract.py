@@ -7,6 +7,38 @@ import json
 from pathlib import Path
 
 
+def state_variants(state):
+    """Probe every JSON leaf, including newly added sensor/configuration fields."""
+
+    def leaves(value, path=()):
+        if isinstance(value, dict):
+            for key, child in value.items():
+                yield from leaves(child, (*path, key))
+        elif isinstance(value, list):
+            for index, child in enumerate(value):
+                yield from leaves(child, (*path, index))
+        else:
+            yield path, value
+
+    for path, original in leaves(state):
+        changed = copy.deepcopy(state)
+        parent = changed
+        for key in path[:-1]:
+            parent = parent[key]
+        if type(original) is bool:
+            replacement = not original
+        elif type(original) in (int, float):
+            replacement = original + 1
+        elif isinstance(original, str):
+            replacement = original + " [input contract probe]"
+        elif original is None:
+            replacement = "[unknown input contract probe]"
+        else:
+            raise ValueError("unsupported_state_leaf")
+        parent[path[-1]] = replacement
+        yield changed
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", required=True)
@@ -56,16 +88,7 @@ def main():
         assert changed_encoded["input_ids"] == encoded_train["input_ids"], "gold_leaks_into_input"
         legacy = JevPreprocessor().preprocess(copy.deepcopy(raw))[0]
         dropped_state_controls += legacy["messages"][0]["content"] != inference["messages"][0]["content"]
-        for field in ("online", "state_fresh", "power", "preset", "presence"):
-            changed = copy.deepcopy(state)
-            if field in ("online", "state_fresh"):
-                changed["devices"][0][field] = not changed["devices"][0][field]
-            elif field == "power":
-                changed["devices"][0]["properties"]["p"] = not changed["devices"][0]["properties"]["p"]
-            elif field == "preset":
-                changed["home_profile"]["reading_preset"]["l"] += 1
-            else:
-                changed["devices"][1]["presence"] = not changed["devices"][1]["presence"]
+        for changed in state_variants(state):
             template.set_mode("transformers")
             encoded_changed = template.encode(plugin.home_decision_request(changed, question))
             assert encoded_changed["input_ids"] != encoded_infer["input_ids"], "nested_state_disappeared"
@@ -78,6 +101,7 @@ def main():
         "train_inference_token_matches": len(rows),
         "gold_independence_checks": len(rows),
         "nested_state_sensitivity_checks": sensitivity_checks,
+        "sensitivity_scope": "every_json_leaf_including_nested_rules_and_unknown_values",
         "legacy_preprocessor_mismatches": dropped_state_controls,
         "minimum_tokens": min(lengths),
         "maximum_tokens": max(lengths),
