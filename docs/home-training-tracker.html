@@ -151,19 +151,19 @@
       <a href="#next"><small>05</small>下一步</a>
       <a href="#evidence"><small>06</small>证据与维护</a>
     </nav>
-    <div class="side-foot"><strong>源文件在 Git · 展示在 ShareOne</strong>每轮保留配置、结果与判断。<br>2026-11-14 · 第 1 轮工程试跑</div>
+    <div class="side-foot"><strong>源文件在 Git · 展示在 ShareOne</strong>每轮保留配置、结果与判断。<br>2026-11-14 · 第 2 轮学习诊断</div>
   </aside>
   <main class="main" id="main">
     <div class="topline"><span><span class="mobile-brand">LOCAL DECISIONS / </span>项目记录 · 住宅决策模型</span><div class="top-actions"><span>更新于 2026.11.14</span><button class="print" type="button" id="print-page">打印 / PDF</button></div></div>
     <header class="hero">
-      <div class="eyebrow">Training journal / 001</div>
+      <div class="eyebrow">Training journal / 002</div>
       <h1>住宅决策模型<br>训练、结果与下一步。</h1>
       <div class="statusline"><span class="pill">工程闭环通过</span><span class="pill warn">模型质量待验证</span><span class="pill neutral">实体设备尚未验收</span></div>
       <p class="lead">最终目标：进入一个已安装同类网关的新家庭，在同一局域网内，以尽量少的屋主配合完成接入。当前先用真实的 9B 模型与模拟设备，把训练、保存、重载、决策和动作反馈串起来。</p>
     </header>
-    <div class="metrics" aria-label="本轮工程试跑摘要">
-      <div class="metric"><strong>32<span>条</span></strong><b>草拟合成样例</b><small>训练 / 验证 / 测试：24 / 4 / 4</small></div>
-      <div class="metric"><strong>4<span>步</span></strong><b>有限训练更新</b><small>batch 1 · 实际消费 4 个样本</small></div>
+    <div class="metrics" aria-label="本轮学习诊断摘要">
+      <div class="metric"><strong>64<span>条</span></strong><b>成对合成样例</b><small>训练 / 验证 / 测试：32 / 16 / 16</small></div>
+      <div class="metric"><strong>64<span>步</span></strong><b>固定预算训练</b><small>batch 1 · 32 条训练样例，2 轮</small></div>
       <div class="metric"><strong>0</strong><b>重载概率最大差值</b><small>另起进程复核 4 条输出</small></div>
       <div class="metric"><strong>0</strong><b>实体控制命令</b><small>所有动作只在本机模拟网关执行</small></div>
     </div>
@@ -173,7 +173,7 @@
       <ol class="milestones">
         <li><span class="step">M01 · 环境与协议</span><span class="pill">已验证</span><h3>接入与模拟环境</h3><p>空网关可自动发现、只读查询；本机协议模拟器可控制与读回。</p></li>
         <li><span class="step">M02 · 目标模型链路</span><span class="pill">已验证</span><h3>9B 训练 → 重载 → 回放</h3><p>Spark 上 QLoRA 更新成功；检查点与决策头保存并重载。</p></li>
-        <li class="current"><span class="step">M03 · 当前下一步</span><span class="pill warn">待开展</span><h3>正式场景与标签审阅</h3><p>扩充独立场景、成对反例与状态变化，先固定评测划分。</p></li>
+        <li class="current"><span class="step">M03 · 本轮诊断</span><span class="pill">检查通过</span><h3>类别覆盖与完整状态输入</h3><p>每个划分覆盖 8 类动作；64 条训练／推理输入一致。真实标签仍待审阅。</p></li>
         <li><span class="step">M04 · 业务效果</span><span class="pill neutral">待验证</span><h3>训练、对照与弃权评测</h3><p>比较规则、仅决策头与 QLoRA；检查正确动作、澄清和危险误判。</p></li>
         <li><span class="step">M05 · 真实环境</span><span class="pill neutral">待准备</span><h3>办公室真实设备验收</h3><p>确认同 LAN 常开承载机及设备清单，再验证受控动作与反馈。</p></li>
         <li><span class="step">M06 · 另一家庭</span><span class="pill neutral">待验收</span><h3>首次接入与日常体验</h3><p>用另一台盒子验证首次接入、家庭权限、人工操作和模型停机回退。</p></li>
@@ -184,22 +184,22 @@
     <section id="data" aria-labelledby="data-title">
       <div class="section-head"><h2 id="data-title"><span>02</span>这一轮，用什么训练</h2><p>数据版本与模型配方分别记录。</p></div>
       <div class="data-grid">
-        <article class="panel"><h3>合成数据 · bundle-v1</h3>
-          <dl class="facts"><div><dt>来源</dt><dd>人工草拟的合成 fixture，非屋主真实标签</dd></div><div><dt>规模</dt><dd>32 条 / 8 个来源场景组</dd></div><div><dt>场景范围</dt><dd>一间书房、模拟灯具与传感器状态</dd></div><div><dt>划分</dt><dd>24 训练 · 4 验证 · 4 测试</dd></div><div><dt>输入长度</dt><dd>最长 260 token；上限 2,048，不静默截断</dd></div></dl>
-          <p class="note">同源样例整体划分；不同来源里相同输入先关联成组。只改变候选顺序的样例不会跨训练与留出集。标签仅用于监督和评测，不进入模型推理提示。</p>
+        <article class="panel"><h3>合成数据 · bundle-v2</h3>
+          <dl class="facts"><div><dt>来源</dt><dd>人工草拟的合成 fixture，非屋主真实标签</dd></div><div><dt>规模</dt><dd>64 条 / 32 个上下文组，每组 2 个状态反例</dd></div><div><dt>场景范围</dt><dd>一间书房、模拟灯具与传感器状态</dd></div><div><dt>划分</dt><dd>32 训练 · 16 验证 · 16 测试</dd></div><div><dt>输入长度</dt><dd>436–450 token；上限 2,048，逐条确认未截断</dd></div></dl>
+          <p class="note">成对反例整体划分；所有划分均覆盖 8 类正确动作，输入无完全重复。各组仍共享任务规则，不等同跨家庭泛化。标签不进入推理提示；未按测试结果挑选检查点。</p>
           <div class="chips" aria-label="八个候选动作"><span class="chip">开灯</span><span class="chip">关灯</span><span class="chip">阅读预设</span><span class="chip">保持状态</span><span class="chip">请求澄清</span><span class="chip">人工回退</span><span class="chip">不支持</span><span class="chip">刷新状态</span></div>
         </article>
-        <article class="panel"><h3>模型配方 · QLoRA 工程试跑</h3>
-          <dl class="facts"><div><dt>底座</dt><dd>Qwen/Qwen3.5-9B-Base</dd></div><div><dt>决策方式</dt><dd>ms-swift 通用决策头，一次前向输出候选概率</dd></div><div><dt>精度</dt><dd>NF4 双重量化底座 / BF16 计算</dd></div><div><dt>LoRA</dt><dd>rank 8 · alpha 16 · dropout 0</dd></div><div><dt>目标模块</dt><dd><code>q_proj / v_proj</code>；视觉分支冻结</dd></div><div><dt>训练预算</dt><dd>4 步 · batch 1 · 学习率 0.0001 · seed 7</dd></div><div><dt>设备</dt><dd>DGX Spark · NVIDIA GB10</dd></div></dl>
-          <p class="note">本轮使用 Base 模型新接决策头；不是 Microsoft-Decision-1 已训练权重，也不表示复现其完整训练方法。</p>
+        <article class="panel"><h3>模型配方 · QLoRA 学习诊断</h3>
+          <dl class="facts"><div><dt>底座</dt><dd>Qwen/Qwen3.5-9B-Base</dd></div><div><dt>决策方式</dt><dd>ms-swift 通用决策头，一次前向输出候选概率</dd></div><div><dt>精度</dt><dd>NF4 双重量化底座 / BF16 计算</dd></div><div><dt>LoRA</dt><dd>rank 8 · alpha 16 · dropout 0</dd></div><div><dt>目标模块</dt><dd><code>q_proj / v_proj</code>；视觉分支冻结</dd></div><div><dt>训练预算</dt><dd>64 步 · batch 1 · 学习率 0.0001 · seed 7</dd></div><div><dt>设备</dt><dd>DGX Spark · NVIDIA GB10</dd></div></dl>
+          <p class="note">ms-swift 4.6.1 的 scoring 损失为监督交叉熵；Base 模型新接通用决策头。尚未执行 RLCD，也未完成 Microsoft-Decision-1 完整复现或 Jev／Clef 对照。</p>
         </article>
       </div>
     </section>
 
     <section id="runs" aria-labelledby="runs-title">
       <div class="section-head"><h2 id="runs-title"><span>03</span>每次尝试，都保留结果</h2><p>2026-11-14 · 含失败、中止和最终对照</p></div>
-      <div class="toolbar" id="run-toolbar"><div class="filters" role="group" aria-label="筛选实验状态"><button class="filter" type="button" data-filter="all" aria-pressed="true">全部</button><button class="filter" type="button" data-filter="complete" aria-pressed="false">已完成</button><button class="filter" type="button" data-filter="incomplete" aria-pressed="false">中止 / 失败</button></div><span class="result-count" id="run-count" role="status" aria-live="polite">8 条运行记录</span></div>
-      <div class="table-wrap"><table class="run-table"><caption>耗时为单次作业墙钟时间，包含模型加载；编号为本页阅读顺序。</caption><thead><tr><th scope="col">编号</th><th scope="col">阶段 / 配置</th><th scope="col">结果</th><th scope="col">耗时</th><th scope="col">观察与后续处理</th></tr></thead><tbody id="run-rows">
+      <div class="toolbar" id="run-toolbar"><div class="filters" role="group" aria-label="筛选实验状态"><button class="filter" type="button" data-filter="all" aria-pressed="true">全部</button><button class="filter" type="button" data-filter="complete" aria-pressed="false">已完成</button><button class="filter" type="button" data-filter="incomplete" aria-pressed="false">中止 / 未通过</button></div><span class="result-count" id="run-count" role="status" aria-live="polite">14 条运行记录</span></div>
+      <div class="table-wrap"><table class="run-table"><caption>耗时包含模型加载；R09 合并列出一次无效输入尝试的四阶段耗时。编号为阅读顺序。</caption><thead><tr><th scope="col">编号</th><th scope="col">阶段 / 配置</th><th scope="col">结果</th><th scope="col">耗时</th><th scope="col">观察与后续处理</th></tr></thead><tbody id="run-rows">
         <tr data-state="incomplete"><td>R01</td><td><strong>BF16 首次加载</strong><span class="sub">异步加载</span></td><td><span class="pill stop">主动中止</span></td><td>82.03 s</td><td>主机内存与 swap 出现压力，停止本次作业。<span class="sub">原回执仅记录外部终止；原因来自当时的资源观察及操作记录。</span></td></tr>
         <tr data-state="incomplete"><td>R02</td><td><strong>BF16 顺序加载</strong><span class="sub">提高资源保护门槛</span></td><td><span class="pill stop">自动停止</span></td><td>41.29 s</td><td>触及 16 GiB 主机内存预留门槛。<span class="sub">不降低门槛，改用 NF4 量化配方。</span></td></tr>
         <tr data-state="incomplete"><td>R03</td><td><strong>NF4 加载与注册</strong><span class="sub">QLoRA 兼容性</span></td><td><span class="pill stop">未完成</span></td><td>56.03 s</td><td>权重加载后遇到多模态模型注册兼容问题。<span class="sub">修正插件的多模态元数据，再独立重试。</span></td></tr>
@@ -208,39 +208,52 @@
         <tr data-state="complete"><td>R06</td><td><strong>最终基线</strong><span class="sub">统一配方 · 无 adapter</span></td><td><span class="pill">已完成</span></td><td>63.04 s</td><td>重新评分原始底座的 32 条输入。<span class="sub">虽然执行于训练之后，未加载训练产物，仍是未适配基线。</span></td></tr>
         <tr data-state="complete"><td>R07</td><td><strong>训练后评分</strong><span class="sub">加载 checkpoint-4</span></td><td><span class="pill">已完成</span></td><td>64.03 s</td><td>32 条真实模型概率进入 mock 回放。<span class="sub">保留错误选择；不使用 gold 标签纠正模型动作。</span></td></tr>
         <tr data-state="complete"><td>R08</td><td><strong>新进程重载</strong><span class="sub">再次加载同一检查点</span></td><td><span class="pill">已完成</span></td><td>47.03 s</td><td>4 条概率向量与 R07 逐值一致。<span class="sub">检查点验证与本地回放均通过。</span></td></tr>
+        <tr data-state="incomplete"><td>R09</td><td><strong>第 2 轮初次尝试</strong><span class="sub">64 步，含基线／评分／重载</span></td><td><span class="pill stop">输入检查未通过</span></td><td>326.20 s</td><td>发现训练预处理丢失嵌套设备与家庭状态，推理却保留完整 JSON。<span class="sub">运行产物保留；不用于判断学习效果。第 1 轮也受相同问题影响。</span></td></tr>
+<tr data-state="complete"><td>R10</td><td><strong>完整输入契约检查</strong><span class="sub">真实 tokenizer 与模板，无权重加载</span></td><td><span class="pill">已通过</span></td><td>—</td><td>64／64 条训练与推理 token 一致，64 次标签独立性检查，320 次嵌套状态变化检查。<span class="sub">旧预处理作为反向对照，64 条均能复现信息丢失。</span></td></tr><tr data-state="complete"><td>R11</td><td><strong>修复后同数据基线</strong><span class="sub">bundle-v2 · 完整状态</span></td><td><span class="pill">已完成</span></td><td>73.04 s</td><td>未适配底座，完整评分 64 条。</td></tr>
+<tr data-state="complete"><td>R12</td><td><strong>修复后 QLoRA 训练</strong><span class="sub">bundle-v2 · 完整状态</span></td><td><span class="pill">已完成</span></td><td>142.09 s</td><td>32 条训练池，预先固定 64 步；保存 adapter 与决策头。</td></tr>
+<tr data-state="complete"><td>R13</td><td><strong>修复后评分</strong><span class="sub">bundle-v2 · 完整状态</span></td><td><span class="pill">已完成</span></td><td>81.04 s</td><td>加载 checkpoint-64；固定训练／验证／测试划分分别计分。</td></tr>
+<tr data-state="complete"><td>R14</td><td><strong>修复后新进程重载</strong><span class="sub">bundle-v2 · 完整状态</span></td><td><span class="pill">已完成</span></td><td>46.03 s</td><td>再次加载同一检查点，4 条概率向量差值为 0。</td></tr>
       </tbody></table></div>
       <p class="note">CUDA / NF4 前向与反向预检均通过。CPU 依赖下载曾更换镜像后完成，环境准备不计入上面的模型作业耗时。所有原始日志和未完成回执保留在 Git 外。</p>
     </section>
 
     <section id="results" aria-labelledby="results-title">
       <div class="section-head"><h2 id="results-title"><span>04</span>工程跑通，不代表模型练好了</h2><p>质量结论与执行证据分开看。</p></div>
+<div class="callout"><strong>本轮发现并修复了输入缺失</strong>旧的通用预处理只保留 state 中的顶层字符串，丢失设备在线、电源与家庭预设。训练与评分现在使用一致的完整状态。旧轮的参数更新／重载证据保留，但旧质量数值不能用于判断完整任务是否可学。</div>
+      <article class="panel" style="margin-top:20px"><h3>第 2 轮 · 出现合成任务学习信号</h3>
+      <div class="table-wrap"><table><caption>同一 bundle-v2；原始 argmax 先计分，尚未应用执行规则。Brier 为候选误差平方和。</caption><thead><tr><th>分组</th><th>未适配</th><th>QLoRA 64 步</th><th>手写规则</th><th>NLL 前 → 后</th><th>Brier 前 → 后</th></tr></thead><tbody><tr><td>训练组</td><td>14 / 32</td><td>20 / 32</td><td>32 / 32</td><td>1.704 → 1.032</td><td>0.743 → 0.518</td></tr><tr><td>验证组</td><td>3 / 16</td><td>6 / 16</td><td>16 / 16</td><td>2.084 → 2.120</td><td>0.924 → 0.915</td></tr><tr><td>测试组</td><td>4 / 16</td><td>5 / 16</td><td>16 / 16</td><td>1.790 → 1.693</td><td>0.831 → 0.842</td></tr></tbody></table></div>
+      <p>训练组正确数衡量能否学到训练任务；验证／测试各只有 16 条，单条改变即 6.25 个百分点。规则基线针对这套明确约定编写，不代表能理解开放家庭请求。模型在本轮所有分组中仍提出 18 次错误写动作建议（执行门禁之前）。</p>
+      <p class="quality-note">这是一轮小规模、完全合成的监督学习诊断。改善不能外推到真实家庭；NLL／Brier 仅作描述，概率校准尚未成立。下一轮开发应使用验证集，扩展前另封存未看过的测试组。</p></article>
+      <div class="panel" style="margin-top:20px"><h3>第 2 轮工程与模拟回放</h3><p>16 个 LoRA B 矩阵更新；新进程重载 4 条的最大概率差为 0。64 条输出完成模拟回放，22 次模拟写入；未授权分支无写入，实体控制命令始终为 0。</p><p class="note">训练共 142.09 秒（含加载），四阶段合计 342.20 秒；不含准备数据、排障和评测解释。作业仍受一线程、低优先级及原内存门槛约束。</p></div>
       <div class="two-col">
-        <article class="panel"><h3>动作判断 · 尚未改善</h3><div class="quality-summary"><div class="quality-number">4 / 32<small>未适配基线</small></div><span class="arrow" aria-hidden="true">→</span><div class="quality-number">4 / 32<small>4 步训练后</small></div></div>
+        <article class="panel"><h3>第 1 轮存档 · 输入缺失，质量结论作废</h3><div class="quality-summary"><div class="quality-number">4 / 32<small>未适配基线</small></div><span class="arrow" aria-hidden="true">→</span><div class="quality-number">4 / 32<small>4 步训练后</small></div></div>
           <div class="table-wrap"><table><caption>原始 argmax 正确数；先计分，再应用澄清等执行规则。</caption><thead><tr><th scope="col">数据分组</th><th scope="col">基线</th><th scope="col">训练后</th></tr></thead><tbody><tr><td>训练组</td><td>2 / 24</td><td>2 / 24</td></tr><tr><td>验证组</td><td>1 / 4</td><td>1 / 4</td></tr><tr><td>测试组</td><td>1 / 4</td><td>1 / 4</td></tr></tbody></table></div>
-          <p class="quality-note">这是一轮工程试跑。数据极少且完全合成，不能据此判断真实家庭泛化能力、概率校准或生产可用性。</p>
+          <p class="quality-note">历史观测原样保留。后续发现嵌套状态缺失，且训练组没有关灯和澄清的正确样例，因此不能据此判断完整任务的学习能力。</p>
         </article>
-        <article class="panel"><h3>已经验证的工程事实</h3><ul class="proof"><li><b>16</b>个 LoRA B 矩阵发生更新<small>不是只生成了检查点目录。</small></li><li><b>0.0231</b>训练前后最大概率变化<small>概率确有变化，argmax 正确数尚未改善。</small></li><li><b>0</b>新进程重载的最大概率差<small>比较 4 条；adapter 与决策头都重新加载。</small></li><li><b>353 ms</b>训练后单条评分中位耗时<small>32 条本次观测；不含冷加载，不是性能承诺。</small></li><li><b>70</b>项本地离线测试通过<small>另有 Spark 实跑回执；不把离线测试等同实机验收。</small></li></ul></article>
+        <article class="panel"><h3>第 1 轮保留的工程事实</h3><ul class="proof"><li><b>16</b>个 LoRA B 矩阵发生更新<small>不是只生成了检查点目录。</small></li><li><b>0.0231</b>训练前后最大概率变化<small>概率确有变化，argmax 正确数尚未改善。</small></li><li><b>0</b>新进程重载的最大概率差<small>比较 4 条；adapter 与决策头都重新加载。</small></li><li><b>353 ms</b>训练后单条评分中位耗时<small>32 条本次观测；不含冷加载，不是性能承诺。</small></li><li><b>70</b>项本地离线测试通过<small>另有 Spark 实跑回执；不把离线测试等同实机验收。</small></li></ul></article>
       </div>
-      <div class="panel" style="margin-top:20px"><h3>模型输出 → 权限检查 → 模拟动作 → 读回</h3><p>本轮 32 条回放：<strong>9 次模拟写入</strong>、17 次澄清、2 次状态已满足、2 次离线回退、2 次状态刷新。模拟写入均读回一致；未授权分支无写入。回放成功表示执行链路一致，不表示动作语义正确。</p><p class="note">具体动作的批准由合成测试上下文提供。真实屋主授权、角色与空间权限必须由服务端独立核验；模型概率不授予控制权。低于既有 0.5 阈值或并列时澄清，但这一阈值尚未做业务校准。</p></div>
+      <div class="panel" style="margin-top:20px"><h3>第 1 轮模拟回放存档</h3><p>第 1 轮 32 条回放：<strong>9 次模拟写入</strong>、17 次澄清、2 次状态已满足、2 次离线回退、2 次状态刷新。模拟写入均读回一致；未授权分支无写入。回放成功表示执行链路一致，不表示动作语义正确。</p><p class="note">具体动作的批准由合成测试上下文提供。真实屋主授权、角色与空间权限必须由服务端独立核验；模型概率不授予控制权。低于既有 0.5 阈值或并列时澄清，但这一阈值尚未做业务校准。</p></div>
     </section>
 
     <section id="next" aria-labelledby="next-title">
-      <div class="section-head"><h2 id="next-title"><span>05</span>下一轮，先把问题和答案定义好</h2><p>计划项，尚未执行。</p></div>
-      <ol class="tasks"><li><div><h3>审阅场景与正确动作</h3><p>确认书房的开关灯、阅读预设、状态不明、离线、歧义需求和越界请求。标出应澄清、应保持和应人工处理的情况；确定哪些规则属于家庭偏好。</p></div><span class="owner">AI 起草 · 用户确认规则</span></li><li><div><h3>扩充独立场景，并冻结划分</h3><p>加入“同一句话、不同状态”的成对反例、状态变化和候选顺序扰动。保留来源组，检查近重复；先固定开发与留出集，再开始质量调试。</p></div><span class="owner">AI 实现与检查</span></li><li><div><h3>做有对照的正式训练</h3><p>比较确定性规则、未适配模型、仅决策头和决策头＋QLoRA。记录正确动作、澄清/弃权、严重误判、资源与延迟；正式阈值待使用方确认。</p></div><span class="owner">AI 训练与评测</span></li><li><div><h3>再进入办公室真实环境</h3><p>先明确同一 LAN 的常开承载机、设备清单与授权范围，再验证真实灯具和人工回退。另一家庭的首次接入另做验收。</p></div><span class="owner">现场条件待确认</span></li></ol>
+      <div class="section-head"><h2 id="next-title"><span>05</span>后面的工作节奏</h2><p>时间为规划预算；不承诺指标提升或生产日期。</p></div>
+      <div class="table-wrap"><table><caption>一次迭代：明确问题 → 固定数据与预算 → 训练对照 → 归类错误 → 决定下一轮。</caption><thead><tr><th>阶段</th><th>规划节奏</th><th>产出与推进条件</th></tr></thead><tbody><tr><td>输入、标签与学习诊断</td><td>几小时到 1 个工作日／轮</td><td>先确认完整输入和类别覆盖，再确认训练集能学会；失败则查工程与标注。</td></tr><tr><td>泛化、稳定性与对照</td><td>半天到 2 个工作日／轮</td><td>增加独立情境、同义表达与候选顺序扰动；比较规则、未适配、仅决策头、QLoRA，并保留 Jev／Clef 对照。</td></tr><tr><td>概率校准与 RLCD-style</td><td>按实验结果排期</td><td>监督基线稳定后再加入 RLCD-style，同数据、同算力预算比较；阈值只在开发集选择。</td></tr><tr><td>真实办公室及另一家庭</td><td>按周安排，取决于现场准备</td><td>真实状态回传、受控操作、手动回退和新盒子首次接入逐项验收。</td></tr></tbody></table></div>
+      <ol class="tasks"><li><div><h3>先解决剩余错误，再决定增加训练量</h3><p>看训练与验证错误是否集中在状态读取、动作区分或语言表达；一次只检验一个主要假设。测试集已经看过，不再用它反复选配方。</p></div><span class="owner">AI 诊断与实验</span></li><li><div><h3>补少量贴近真实使用的情境</h3><p>先由 AI 起草，再请使用者确认边界和偏好；扩充独立来源并封存新的测试组。模拟规则正确不等于屋主偏好正确。</p></div><span class="owner">AI 起草 · 用户审阅</span></li><li><div><h3>办公室准备与模型迭代并行</h3><p>确认同 LAN 常开承载机、灯具／传感器清单及授权范围。模型达到进入现场的标准后，再做受控真实验收。</p></div><span class="owner">现场条件待确认</span></li></ol>
       <div class="callout"><strong>当前最有价值的人工输入</strong>少量真实使用情境及“这种情况下应该怎么做”的判断。模拟数据生成、格式转换、训练和回执整理由 AI 完成，暂时不需要准备实体灯具。</div>
     </section>
 
     <section id="evidence" aria-labelledby="evidence-title">
       <div class="section-head"><h2 id="evidence-title"><span>06</span>可追溯，也方便接着做</h2><p>此页是摘要；原始产物留在本地运行目录。</p></div>
       <div class="panel">
-        <details><summary>固定版本与内容摘要</summary><div><dl class="facts"><div><dt>模型源</dt><dd>Qwen/Qwen3.5-9B-Base / 官方 ModelScope</dd></div><div><dt>模型 revision</dt><dd><code>f3507de96f70f0056e2d441fe4cc6e9ded117382</code></dd></div><div><dt>bundle SHA-256</dt><dd><code>68af450b9f301b5ebfdf91ebfb448f8261dbd3b2315ac7e5d6589139277fc9f1</code></dd></div><div><dt>adapter SHA-256</dt><dd><code>960cfac6276ec52e88bf378297c437c3cc0b681f5cdeb1f4325bfb1a398d5d47</code></dd></div></dl><p>权重下载逐文件验证大小和哈希。摘要用于对应本次产物，不在页面提供权重、逐条数据或身份映射。</p></div></details>
-        <details><summary>环境、资源预算与已知限制</summary><div><p>Python 3.12 · PyTorch 2.11.0+cu130 · Transformers 5.8.1 · ms-swift 4.6.1 · PEFT 0.20.0 · bitsandbytes 0.49.2。GPU 实验环境独立于仓库 CPU 依赖锁。</p><ul><li>每作业单 CPU 线程、nice 10、最多 900 秒；实际测试进程保持普通优先级。</li><li>启动需至少 32 GiB 可用内存；运行保留 16 GiB；新增 swap 超过 512 MiB 即停止。</li><li>最终 NF4 作业最低可用内存约 16.9 GiB，最大单作业新增 swap 约 23.2 MiB；不包含先前 BF16 尝试造成的 swap 增量。</li><li>训练后评分 CUDA peak allocated 约 11.76 GiB，reserved 约 11.91 GiB。这不是整机内存占用。</li><li>Spark 实跑不替代 H200 部署验收。此配方尚未注册到研究 HTTP API 或生产控制入口。</li></ul></div></details>
+        <details><summary>第 2 轮输入检查与产物摘要</summary><div><dl class="facts"><div><dt>bundle SHA-256</dt><dd><code>794e015cc32a86afdfdb4408b6f3319a50fb25b016e7cbdac529765f82b35cdc</code></dd></div><div><dt>adapter SHA-256</dt><dd><code>a235ff29566f0362638fe644b9d6fcda7334d66edf2e72dfaab3bd6dc202c98f</code></dd></div><div><dt>输入验证</dt><dd>64 条 token 一致；320 次嵌套状态敏感性检查；0 条截断。</dd></div><div><dt>资源</dt><dd>最低可用 16.64 GiB；最大单作业新增 swap 19.39 MiB。</dd></div></dl><p>原始样例、逐条标签、错误和检查点保留在 Git 外。input-contract-receipt、round-receipt、replay-receipt 与各阶段作业回执分别记录。初次无效输入尝试单独归档。</p></div></details>
+        <details><summary>第 1 轮固定版本与内容摘要</summary><div><dl class="facts"><div><dt>模型源</dt><dd>Qwen/Qwen3.5-9B-Base / 官方 ModelScope</dd></div><div><dt>模型 revision</dt><dd><code>f3507de96f70f0056e2d441fe4cc6e9ded117382</code></dd></div><div><dt>bundle SHA-256</dt><dd><code>68af450b9f301b5ebfdf91ebfb448f8261dbd3b2315ac7e5d6589139277fc9f1</code></dd></div><div><dt>adapter SHA-256</dt><dd><code>960cfac6276ec52e88bf378297c437c3cc0b681f5cdeb1f4325bfb1a398d5d47</code></dd></div></dl><p>权重下载逐文件验证大小和哈希。摘要用于对应本次产物，不在页面提供权重、逐条数据或身份映射。</p></div></details>
+        <details><summary>环境、资源预算与第 1 轮资源观测</summary><div><p>Python 3.12 · PyTorch 2.11.0+cu130 · Transformers 5.8.1 · ms-swift 4.6.1 · PEFT 0.20.0 · bitsandbytes 0.49.2。GPU 实验环境独立于仓库 CPU 依赖锁。</p><ul><li>每作业单 CPU 线程、nice 10、最多 900 秒；实际测试进程保持普通优先级。</li><li>启动需至少 32 GiB 可用内存；运行保留 16 GiB；新增 swap 超过 512 MiB 即停止。</li><li>最终 NF4 作业最低可用内存约 16.9 GiB，最大单作业新增 swap 约 23.2 MiB；不包含先前 BF16 尝试造成的 swap 增量。</li><li>训练后评分 CUDA peak allocated 约 11.76 GiB，reserved 约 11.91 GiB。这不是整机内存占用。</li><li>Spark 实跑不替代 H200 部署验收。此配方尚未注册到研究 HTTP API 或生产控制入口。</li></ul></div></details>
         <details><summary>4 个训练 step 的 loss，该怎么理解</summary><div><p class="mono">3.2940 · 2.4865 · 2.1092 · 1.5764</p><p>数值均有限。但每一步消费不同样本，不能把这四个数的下降视为质量改善证据。应以固定留出集、规则基线和错误类型比较判断下一轮效果。</p></div></details>
         <details><summary>证据文件与后续更新规则</summary><div><p>摘要对应本地 <code>pilot-receipt.json</code>、<code>checkpoint-verification.json</code>、各阶段 <code>*-job.json</code>、<code>replay-receipt.json</code> 与保留的失败尝试。本页不包含机器地址、账号、逐条标签、原始错误或下载入口。</p><ol class="compact-list"><li>每轮新增运行记录，保留失败及中止原因，不覆盖旧轮结论。</li><li>记录数据版本、划分、模型 revision、配方、资源预算、评测和未完成项。</li><li>新结果必须来自回执；明确区分工程证据、业务质量和实体设备验收。</li><li>修改本 repo 的 <code>docs/home-training-tracker.html</code> 并提交 Git，再刷新原 ShareOne 链接。页面日期表示这份快照的更新时间，不表示训练仍在运行。</li></ol></div></details>
       </div>
       <div class="resource-links"><a href="https://github.com/sudoprivacy/local-decision-models/blob/main/docs/home-training-tracker.html" target="_blank" rel="noopener">本页 HTML 源文件<span>docs/home-training-tracker.html</span></a><a href="https://github.com/sudoprivacy/local-decision-models/commits/main/docs/home-training-tracker.html" target="_blank" rel="noopener">页面版本历史<span>在 Git 中查看变更与回退</span></a></div>
     </section>
-    <footer class="footer"><p>LOCAL DECISION MODELS · 住宅试点<br>公开摘要仅记录方法、配置和汇总结果。真实记录、身份映射、逐条标签、模型产物及原始日志保留在 Git 外。</p><p>2026-11-14 / 第一轮工程试跑<br>工程通过 · 质量待验证 · 实机待验收</p></footer>
+    <footer class="footer"><p>LOCAL DECISION MODELS · 住宅试点<br>公开摘要仅记录方法、配置和汇总结果。真实记录、身份映射、逐条标签、模型产物及原始日志保留在 Git 外。</p><p>2026-11-14 / 第二轮学习诊断<br>工程通过 · 质量待验证 · 实机待验收</p></footer>
   </main>
   <script>
     const toolbar=document.getElementById('run-toolbar');
