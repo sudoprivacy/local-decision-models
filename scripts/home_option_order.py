@@ -65,9 +65,10 @@ def register_swift_callback():
     class HomeOptionOrderCallback(TrainerCallback):
         def on_train_begin(self, args, state, control, **kwargs):
             self.profile = os.environ.get("HOME_OPTION_ORDER_PROFILE", "standard")
-            if self.profile not in ("standard", "minimal_pair"):
+            profiles = {"standard": 32, "minimal_pair": 2, "paired_guards": 8}
+            if self.profile not in profiles:
                 raise ValueError("unknown_training_exposure_profile")
-            self.rows = 2 if self.profile == "minimal_pair" else 32
+            self.rows = profiles[self.profile]
             self.epochs = 384 // self.rows
             data = self.trainer.train_dataset
             if not isinstance(data, LazyLLMDataset) or len(data) != self.rows:
