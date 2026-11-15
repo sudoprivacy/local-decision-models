@@ -65,17 +65,18 @@ def register_swift_callback():
     class HomeOptionOrderCallback(TrainerCallback):
         def on_train_begin(self, args, state, control, **kwargs):
             self.profile = os.environ.get("HOME_OPTION_ORDER_PROFILE", "standard")
-            profiles = {"standard": 32, "minimal_pair": 2, "paired_guards": 8}
+            profiles = {"standard": (32, 384), "minimal_pair": (2, 384),
+                        "paired_guards": (8, 384), "paired_guards_long": (8, 1536)}
             if self.profile not in profiles:
                 raise ValueError("unknown_training_exposure_profile")
-            self.rows = profiles[self.profile]
-            self.epochs = 384 // self.rows
+            self.rows, self.steps = profiles[self.profile]
+            self.epochs = self.steps // self.rows
             data = self.trainer.train_dataset
             if not isinstance(data, LazyLLMDataset) or len(data) != self.rows:
                 raise ValueError("training_rows_do_not_match_exposure_profile")
             if (args.dataloader_num_workers != 0 or args.world_size != 1
                     or args.per_device_train_batch_size != 1
-                    or args.gradient_accumulation_steps != 1 or args.max_steps != 384):
+                    or args.gradient_accumulation_steps != 1 or args.max_steps != self.steps):
                 raise ValueError("round5_training_contract_changed")
             if self.trainer.eval_dataset is not None or state.global_step != 0:
                 raise ValueError("round5_requires_fresh_training_without_in_loop_evaluation")
@@ -121,7 +122,7 @@ def register_swift_callback():
             self.epoch = None
 
         def on_train_end(self, args, state, control, **kwargs):
-            if state.global_step != 384 or len(self.audit) != 384:
+            if state.global_step != self.steps or len(self.audit) != self.steps:
                 raise ValueError("training_exposure_contract_failed")
             for key in self.expected:
                 seen = [r for r in self.audit if r["row_sha256"] == key]
@@ -129,7 +130,7 @@ def register_swift_callback():
                 if (len(seen) != self.epochs or len(order_counts) != 12
                         or set(order_counts.values()) != {self.epochs // 12}):
                     raise ValueError("per_row_permutation_contract_failed")
-            receipt = {"status": "passed", "steps": 384, "rows": self.rows,
+            receipt = {"status": "passed", "steps": self.steps, "rows": self.rows,
                        "epochs": self.epochs, "profile": self.profile,
                        "exposures_per_row": self.epochs, "distinct_orders_per_row": 12,
                        "repeats_per_order_per_row": self.epochs // 12,
