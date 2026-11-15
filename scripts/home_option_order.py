@@ -64,9 +64,14 @@ def register_swift_callback():
 
     class HomeOptionOrderCallback(TrainerCallback):
         def on_train_begin(self, args, state, control, **kwargs):
+            self.profile = os.environ.get("HOME_OPTION_ORDER_PROFILE", "standard")
+            if self.profile not in ("standard", "minimal_pair"):
+                raise ValueError("unknown_training_exposure_profile")
+            self.rows = 2 if self.profile == "minimal_pair" else 32
+            self.epochs = 384 // self.rows
             data = self.trainer.train_dataset
-            if not isinstance(data, LazyLLMDataset) or len(data) != 32:
-                raise ValueError("round5_requires_32_lazy_training_rows")
+            if not isinstance(data, LazyLLMDataset) or len(data) != self.rows:
+                raise ValueError("training_rows_do_not_match_exposure_profile")
             if (args.dataloader_num_workers != 0 or args.world_size != 1
                     or args.per_device_train_batch_size != 1
                     or args.gradient_accumulation_steps != 1 or args.max_steps != 384):
@@ -82,7 +87,7 @@ def register_swift_callback():
             self.epoch = None
             self.audit = []
             self.expected = Counter(fingerprint(data.dataset[i]) for i in range(len(data)))
-            if len(self.expected) != 32:
+            if len(self.expected) != self.rows:
                 raise ValueError("duplicate_preprocessed_training_rows")
             # Fail closed on encoding errors; never replace a failed row with another.
             data.strict = True
@@ -90,14 +95,14 @@ def register_swift_callback():
             data.encode_func = self.encode
 
         def on_epoch_begin(self, args, state, control, **kwargs):
-            self.epoch = int(state.global_step // 32)
-            if state.global_step % 32 or self.epoch >= 12:
+            self.epoch = int(state.global_step // self.rows)
+            if state.global_step % self.rows or self.epoch >= self.epochs:
                 raise ValueError("unexpected_epoch_boundary")
 
         def encode(self, row, **kwargs):
             if self.epoch is None:
                 raise ValueError("encoding_outside_training_epoch")
-            transformed, order = permute_prepared(row, self.epoch)
+            transformed, order = permute_prepared(row, self.epoch % 12)
             encoded = self.original_encode(transformed, **kwargs)
             if encoded["target_probs"] != transformed["target_probs"]:
                 raise ValueError("encoded_target_mismatch")
@@ -110,7 +115,7 @@ def register_swift_callback():
 
         def on_epoch_end(self, args, state, control, **kwargs):
             seen = Counter(r["row_sha256"] for r in self.audit if r["epoch"] == self.epoch)
-            if seen != self.expected or state.global_step != (self.epoch + 1) * 32:
+            if seen != self.expected or state.global_step != (self.epoch + 1) * self.rows:
                 raise ValueError("epoch_exposure_contract_failed")
             self.epoch = None
 
@@ -119,10 +124,14 @@ def register_swift_callback():
                 raise ValueError("training_exposure_contract_failed")
             for key in self.expected:
                 seen = [r for r in self.audit if r["row_sha256"] == key]
-                if len(seen) != 12 or len({tuple(r["order"]) for r in seen}) != 12:
+                order_counts = Counter(tuple(r["order"]) for r in seen)
+                if (len(seen) != self.epochs or len(order_counts) != 12
+                        or set(order_counts.values()) != {self.epochs // 12}):
                     raise ValueError("per_row_permutation_contract_failed")
-            receipt = {"status": "passed", "steps": 384, "rows": 32, "epochs": 12,
-                       "exposures_per_row": 12, "distinct_orders_per_row": 12,
+            receipt = {"status": "passed", "steps": 384, "rows": self.rows,
+                       "epochs": self.epochs, "profile": self.profile,
+                       "exposures_per_row": self.epochs, "distinct_orders_per_row": 12,
+                       "repeats_per_order_per_row": self.epochs // 12,
                        "training_encode_calls": len(self.audit),
                        "audit_sha256": hashlib.sha256(self.audit_path.read_bytes()).hexdigest(),
                        "max_tokens": max(r["token_count"] for r in self.audit),
