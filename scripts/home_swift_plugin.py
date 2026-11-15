@@ -88,3 +88,8 @@ if os.environ.get("HOME_PILOT_BUNDLE"):
             ),
             exist_ok=True,
         )
+
+if os.environ.get("HOME_OPTION_ORDER") == "1":
+    from home_option_order import register_swift_callback
+
+    register_swift_callback()
