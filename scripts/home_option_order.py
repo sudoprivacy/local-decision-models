@@ -13,19 +13,25 @@ from pathlib import Path
 
 
 def fingerprint(value):
-    return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True,
-                                     allow_nan=False).encode()).hexdigest()
+    return hashlib.sha256(
+        json.dumps(value, ensure_ascii=False, sort_keys=True, allow_nan=False).encode()
+    ).hexdigest()
 
 
-def option_orders(options):
-    """Twelve distinct orders, independent of state and gold; cover every position.
+def option_orders(options, row_key=None):
+    """Twelve distinct orders, independent of gold; cover every position.
 
     Keep the original and one-place rotation out of the training orders so the
     existing two evaluation orders still probe an unseen presentation.
     """
     if len(options) != 8 or len(set(options)) != 8:
         raise ValueError("eight_unique_options_required")
-    rng = random.Random("home-order-r5:" + fingerprint(options))
+    seed = (
+        "home-order-r5:" + fingerprint(options)
+        if row_key is None
+        else "home-order-row-v1:" + fingerprint([options, row_key])
+    )
+    rng = random.Random(seed)
     forbidden = {tuple(range(8)), tuple(range(1, 8)) + (0,)}
     orders = []
     for count in (8, 4):
@@ -39,7 +45,17 @@ def option_orders(options):
     return orders
 
 
-def permute_prepared(row, epoch):
+def inference_row_key(row):
+    """Fingerprint inference-visible input only, excluding labels and metadata."""
+    fields = ("messages", "kinds", "questions", "options")
+    if any(name not in row for name in fields):
+        raise ValueError("inference_fields_required_for_row_conditioned_order")
+    return fingerprint({name: row[name] for name in fields})
+
+
+def permute_prepared(row, epoch, *, mode="shared"):
+    if mode not in ("shared", "row_conditioned"):
+        raise ValueError("unknown_option_order_mode")
     if not isinstance(epoch, int) or not 0 <= epoch < 12:
         raise ValueError("epoch_must_be_in_0_to_11")
     if row.get("kinds") != ["choice"] or len(row.get("options", [])) != 1:
@@ -48,7 +64,8 @@ def permute_prepared(row, epoch):
     targets = row.get("target_probs")
     if targets is None or len(targets) != 1 or len(targets[0]) != 8:
         raise ValueError("eight_training_targets_required")
-    order = option_orders(options)[epoch]
+    row_key = inference_row_key(row) if mode == "row_conditioned" else None
+    order = option_orders(options, row_key)[epoch]
     result = copy.deepcopy(row)
     result["options"] = [[options[i] for i in order]]
     result["target_probs"] = [[targets[0][i] for i in order]]
@@ -64,11 +81,18 @@ def register_swift_callback():
 
     class HomeOptionOrderCallback(TrainerCallback):
         def on_train_begin(self, args, state, control, **kwargs):
+            self.mode = os.environ.get("HOME_OPTION_ORDER_MODE", "shared")
+            if self.mode not in ("shared", "row_conditioned"):
+                raise ValueError("unknown_option_order_mode")
             self.profile = os.environ.get("HOME_OPTION_ORDER_PROFILE", "standard")
-            profiles = {"standard": (32, 384), "minimal_pair": (2, 384),
-                        "paired_guards": (8, 384), "paired_guards_long": (8, 1536),
-                        "balanced_conditions": (64, 1536),
-                        "numeric_priority": (128, 1536)}
+            profiles = {
+                "standard": (32, 384),
+                "minimal_pair": (2, 384),
+                "paired_guards": (8, 384),
+                "paired_guards_long": (8, 1536),
+                "balanced_conditions": (64, 1536),
+                "numeric_priority": (128, 1536),
+            }
             if self.profile not in profiles:
                 raise ValueError("unknown_training_exposure_profile")
             self.rows, self.steps = profiles[self.profile]
@@ -76,9 +100,13 @@ def register_swift_callback():
             data = self.trainer.train_dataset
             if not isinstance(data, LazyLLMDataset) or len(data) != self.rows:
                 raise ValueError("training_rows_do_not_match_exposure_profile")
-            if (args.dataloader_num_workers != 0 or args.world_size != 1
-                    or args.per_device_train_batch_size != 1
-                    or args.gradient_accumulation_steps != 1 or args.max_steps != self.steps):
+            if (
+                args.dataloader_num_workers != 0
+                or args.world_size != 1
+                or args.per_device_train_batch_size != 1
+                or args.gradient_accumulation_steps != 1
+                or args.max_steps != self.steps
+            ):
                 raise ValueError("round5_training_contract_changed")
             if self.trainer.eval_dataset is not None or state.global_step != 0:
                 raise ValueError("round5_requires_fresh_training_without_in_loop_evaluation")
@@ -106,12 +134,16 @@ def register_swift_callback():
         def encode(self, row, **kwargs):
             if self.epoch is None:
                 raise ValueError("encoding_outside_training_epoch")
-            transformed, order = permute_prepared(row, self.epoch % 12)
+            transformed, order = permute_prepared(row, self.epoch % 12, mode=self.mode)
             encoded = self.original_encode(transformed, **kwargs)
             if encoded["target_probs"] != transformed["target_probs"]:
                 raise ValueError("encoded_target_mismatch")
-            entry = {"epoch": self.epoch, "row_sha256": fingerprint(row),
-                     "order": list(order), "token_count": len(encoded["input_ids"])}
+            entry = {
+                "epoch": self.epoch,
+                "row_sha256": fingerprint(row),
+                "order": list(order),
+                "token_count": len(encoded["input_ids"]),
+            }
             self.audit.append(entry)
             with self.audit_path.open("a", encoding="utf-8") as out:
                 out.write(json.dumps(entry) + "\n")
@@ -129,18 +161,29 @@ def register_swift_callback():
             for key in self.expected:
                 seen = [r for r in self.audit if r["row_sha256"] == key]
                 order_counts = Counter(tuple(r["order"]) for r in seen)
-                if (len(seen) != self.epochs or len(order_counts) != 12
-                        or set(order_counts.values()) != {self.epochs // 12}):
+                if (
+                    len(seen) != self.epochs
+                    or len(order_counts) != 12
+                    or set(order_counts.values()) != {self.epochs // 12}
+                ):
                     raise ValueError("per_row_permutation_contract_failed")
-            receipt = {"status": "passed", "steps": self.steps, "rows": self.rows,
-                       "epochs": self.epochs, "profile": self.profile,
-                       "exposures_per_row": self.epochs, "distinct_orders_per_row": 12,
-                       "repeats_per_order_per_row": self.epochs // 12,
-                       "training_encode_calls": len(self.audit),
-                       "audit_sha256": hashlib.sha256(self.audit_path.read_bytes()).hexdigest(),
-                       "max_tokens": max(r["token_count"] for r in self.audit),
-                       "physical_commands_sent": 0}
+            receipt = {
+                "status": "passed",
+                "steps": self.steps,
+                "rows": self.rows,
+                "epochs": self.epochs,
+                "profile": self.profile,
+                "mode": self.mode,
+                "exposures_per_row": self.epochs,
+                "distinct_orders_per_row": 12,
+                "repeats_per_order_per_row": self.epochs // 12,
+                "training_encode_calls": len(self.audit),
+                "audit_sha256": hashlib.sha256(self.audit_path.read_bytes()).hexdigest(),
+                "max_tokens": max(r["token_count"] for r in self.audit),
+                "physical_commands_sent": 0,
+            }
             self.audit_path.with_name("augmentation-receipt.json").write_text(
-                json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+                json.dumps(receipt, indent=2) + "\n", encoding="utf-8"
+            )
 
     callbacks_map["home_option_order"] = HomeOptionOrderCallback
