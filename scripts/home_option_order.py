@@ -67,7 +67,8 @@ def register_swift_callback():
             self.profile = os.environ.get("HOME_OPTION_ORDER_PROFILE", "standard")
             profiles = {"standard": (32, 384), "minimal_pair": (2, 384),
                         "paired_guards": (8, 384), "paired_guards_long": (8, 1536),
-                        "balanced_conditions": (64, 1536)}
+                        "balanced_conditions": (64, 1536),
+                        "numeric_priority": (128, 1536)}
             if self.profile not in profiles:
                 raise ValueError("unknown_training_exposure_profile")
             self.rows, self.steps = profiles[self.profile]
