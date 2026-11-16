@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "reviewed_on": "2026-11-14",
+  "reviewed_on": "2026-11-16",
   "scope": "Existing installed homes; read-only configuration acquisition before broader decision-model training.",
   "sources": [
     {
@@ -10,6 +10,21 @@
       "document_date": "2023-08-25",
       "origin": "Owner-supplied PDF; original retained outside Git",
       "sections": {"methods": "p.4", "node_types": "p.6", "push_updates": "pp.6-8", "node_query": "pp.12-15", "group_room_query": "p.16", "scene_query": "p.17", "properties": "pp.19-25"}
+    },
+    {
+      "id": "pro_lan_v2_4",
+      "title": "Yeelight Pro局域网协议",
+      "version": "2.4",
+      "document_date": "2025-07-04",
+      "origin": "Vendor-provided DOCX; original retained outside Git",
+      "evidence_level": "document inspection only; new fields not verified on populated hardware",
+      "sections": {"topology": "1.1 topology synchronization", "exact_lux": "2.12 MaiRui motion sensor properties"}
+    },
+    {
+      "id": "vendor_scope_20261116",
+      "origin": "Vendor support clarification; private correspondence retained outside Git",
+      "evidence_level": "vendor statement, not account-authorized API verification",
+      "scope": "Supported LAN path discovers and operates devices. Complete scene/automation definitions and lamp-group membership are cloud-held; vendor directs clients to MCP for these details. Exact MCP tools and real-account responses remain unverified."
     },
     {
       "id": "official_cli",
@@ -23,12 +38,13 @@
   ],
   "capabilities": [
     {"id": "inventory", "lan": "gateway_get.node, gateway_get.room, gateway_get.group, gateway_get.scene", "local_implementation": "read_only", "verification": "real empty gateway plus synthetic populated loopback; installed populated home pending"},
-    {"id": "scene_actions", "lan": "not defined in reviewed v2.22; name/id/state only", "cloud_cli": "scene.detail.get", "http": "POST /v1/scene/{sceneId}/r/detail", "requires": "normal account authorization; actual project access unverified", "local_implementation": "actions=null; never infer scope or settings from scene name"},
-    {"id": "automation_rules", "lan": "not defined in reviewed v2.22", "cloud_cli": "automation.list, automation.detail.get", "http": "POST /v1/automations/r/list; GET /v2/thing/manage/house/{houseId}/automation/{automationId}/r/info", "requires": "normal account authorization; actual project access unverified", "local_implementation": "rules=null; missing is not an empty automation list"},
-    {"id": "room_and_group_membership", "lan": "reviewed query examples do not establish member relations", "local_implementation": "membership=null; names and matching numeric IDs do not establish membership", "next_check": "newer LAN contract or authorized configuration export"},
-    {"id": "state_and_events", "lan": "gateway_post.prop, gateway_post.event", "local_implementation": "one-shot inventory only; no persistent event receiver", "limits": "snapshot receipt time is not device event time or proof of fresh state"},
+    {"id": "scene_actions", "lan": "v2.4 gateway_get.scene still exposes name/id/state, not complete actions; vendor confirms cloud path for details", "cloud_cli": "scene.detail.get", "http": "POST /v1/scene/{sceneId}/r/detail", "requires": "normal account authorization; actual project access unverified", "local_implementation": "actions=null; never infer scope or settings from scene name", "sources": ["pro_lan_v2_4", "vendor_scope_20261116", "official_cli"]},
+    {"id": "automation_rules", "lan": "not defined in reviewed v2.4; vendor confirms cloud path for complete rules", "cloud_cli": "automation.list, automation.detail.get", "http": "POST /v1/automations/r/list; GET /v2/thing/manage/house/{houseId}/automation/{automationId}/r/info", "requires": "normal account authorization; actual project access unverified", "local_implementation": "rules=null; missing is not an empty automation list", "sources": ["pro_lan_v2_4", "vendor_scope_20261116", "official_cli"]},
+    {"id": "room_and_group_membership", "lan": "v2.4 topology adds roomid for each visible/control unit; this is not a physical lamp-group member list. Vendor directs complete group membership queries to cloud MCP.", "cloud_cli_candidates": ["group.detail.get", "meshgroup.detail.get"], "http_candidates": ["GET /v2/thing/manage/house/{houseId}/group/{groupId}/r/info", "POST /v1/meshgroup/{groupId}/r/detail"], "cloud_evidence": "Pinned official CLI source has authorized HTTP reads; exact group/member payload coverage and MCP tool mapping still require verification. Cloud authorization does not imply MCP transport is the only possible client integration.", "local_implementation": "membership=null; new roomid mapping not implemented or hardware-verified", "next_check": "verify topology room association on supported firmware and authorized cloud group-member reads", "sources": ["pro_lan_v2_4", "vendor_scope_20261116", "official_cli"]},
+    {"id": "component_topology", "lan": "v2.4 topology adds ch_num and cids; cids are addressable component type IDs, not lamp-group device members", "minimum_firmware": {"normal": "3.4.2.001", "enhanced": "5.1.25.001"}, "local_implementation": "not mapped yet", "limits": "topology lists visible/control units (groups or ungrouped devices), not necessarily all physical devices; complete component catalog still needed", "sources": ["pro_lan_v2_4"]},
+    {"id": "state_and_events", "lan": "gateway_post.prop, gateway_post.event", "local_implementation": "one-shot inventory only; no persistent event receiver", "limits": "snapshot receipt time is not device event time or proof of fresh state; initial/reconnect cache semantics, event sequence, sample timestamps and manual-operation source remain unconfirmed"},
     {"id": "type_catalog", "lan": "documented product types include lighting, curtain, relay, HVAC, panel and sensor classes", "local_implementation": "recognize type names; normalize a subset of light/curtain/motion/contact/climate state; report unmapped fields", "limits": "type recognition does not grant control or prove all features supported by a specific product/firmware"},
-    {"id": "light_level", "lan": "pt=134 level 1..8 reports bands; level 4 is 150..250 lux", "local_implementation": "preserve band and unknown exact lux", "limits": "a band crossing a requested threshold cannot decide the threshold; new exact-lux properties need separate documentation"},
+    {"id": "light_level", "lan": "pt=134 level 1..8 reports bands; level 4 is 150..250 lux. v2.4 MaiRui pt=138 luminance reports 0..65536 lux with read/report permissions.", "local_implementation": "preserve existing bands and unknown exact lux; MaiRui exact-lux mapping not implemented or hardware-verified", "limits": "a band crossing a requested threshold cannot decide the threshold; exact-lux support must not be inferred for other sensor types", "sources": ["pro_lan_v2_22", "pro_lan_v2_4"]},
     {"id": "authorization", "lan": "third-party LAN control must already be accessible", "local_implementation": "no cloud sign-in fallback or live write path", "limits": "gateway discovery, configuration and model confidence grant no control permission"}
   ],
   "configuration_contract": {
@@ -70,7 +86,9 @@
     "not_claimed": ["full Yeelight feature coverage", "real-home decision quality", "complete configuration export", "new-home zero-touch onboarding", "physical device control acceptance"]
   },
   "next_steps": [
-    "Obtain newer LAN documents or confirmation of configuration export coverage.",
+    "Apply documented v2.4 room/component and exact-lux mappings only after separate adapter checks; do not conflate topology with physical group membership.",
+    "Verify exact metadata MCP tools or equivalent authorized cloud APIs for optional import of existing scenes, automations and group members; preserve LAN-only daily device control.",
+    "Confirm initial/reconnect state freshness and manual-operation source semantics; keep unconfirmed values unknown.",
     "Read one authorized installed environment; keep real identity mappings and configuration outside Git.",
     "Define supported actions from verified configuration, with unknown/unsupported/clarify alternatives.",
     "Expand synthetic decision fixtures from capabilities and boundary conditions, then review real preference labels.",
