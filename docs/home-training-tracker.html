@@ -174,17 +174,18 @@
       <a href="#next"><small>05</small>下一步</a>
       <a href="#evidence"><small>06</small>证据与维护</a>
     </nav>
-    <div class="side-foot"><strong>源文件在 Git · 展示在 ShareOne</strong>每轮保留配置、结果与判断。<br>2026-11-16 · 第 16 轮排列覆盖对照完成</div>
+    <div class="side-foot"><strong>源文件在 Git · 展示在 ShareOne</strong>每轮保留配置、结果与判断。<br>2026-11-16 · 第 17 轮训练完成，评测恢复中</div>
   </aside>
   <main class="main" id="main">
     <div class="topline"><span><span class="mobile-brand">LOCAL DECISIONS / </span>项目记录 · 住宅决策模型</span><div class="top-actions"><span>更新于 2026.11.16</span><button class="print" type="button" id="print-page">打印 / PDF</button></div></div>
     <header class="hero">
-      <div class="eyebrow">Training journal / 016</div>
+      <div class="eyebrow">Training journal / 017</div>
       <h1>住宅决策模型<br>训练、结果与下一步。</h1>
       <div class="statusline"><span class="pill">工程闭环通过</span><span class="pill warn">模型质量待验证</span><span class="pill neutral">实体设备尚未验收</span></div>
       <p class="lead">最终目标：进入一个已安装同类网关的新家庭，在同一局域网内，以尽量少的屋主配合完成接入。当前先用真实的 9B 模型与模拟设备，把训练、保存、重载、决策和动作反馈串起来。</p>
     </header>
-    <div class="metrics" aria-label="最近一次模型训练摘要：第 16 轮">
+    <p class="note">下方四项为第 16 轮已完成评测的摘要；第 17 轮训练已完成，正在恢复评测，<a href="#round17-progress">当前进度与中断记录见此处</a>。</p>
+    <div class="metrics" aria-label="最近完整评测摘要：第 16 轮">
       <div class="metric"><strong>128<span>条</span></strong><b>固定训练集做排列对照</b><small>128 条与第 14 轮一致；类别曝光不变</small></div>
       <div class="metric"><strong>1,536<span>步</span></strong><b>固定预算训练</b><small>batch 1 · 每条学习 12 次，12 种顺序各 1 次</small></div>
       <div class="metric"><strong>0</strong><b>重载概率最大差值</b><small>另起进程复核 64 条训练题，概率逐值一致</small></div>
@@ -201,7 +202,7 @@
         <li><span class="step">M05 · 真实环境</span><span class="pill neutral">待准备</span><h3>办公室真实设备验收</h3><p>确认同 LAN 常开承载机及设备清单，再验证受控动作与反馈。</p></li>
         <li><span class="step">M06 · 另一家庭</span><span class="pill neutral">待验收</span><h3>首次接入与日常体验</h3><p>用另一台盒子验证首次接入、家庭权限、人工操作和模型停机回退。</p></li>
       </ol>
-      <div class="update-note"><strong>最新：第 16 轮排列覆盖对照完成</strong>数据、步数与类别曝光不变，只调整每条输入看到的排列。<a href="#round16-results">查看训练结果与下一步</a>。</div>
+      <div class="update-note"><strong>最新：第 17 轮训练完成，评测恢复中</strong>停电前训练已保存；检查点完整性已复核。评分中断及恢复过程一并记录，尚无本轮质量结论。<a href="#round17-progress">查看当前进度</a>。</div>
       <div class="update-note"><strong>接入边界也纳入追踪</strong>当前设备发现与日常控制路径是屋主在原有 App 中开启一次“第三方控制”，之后自动局域网连接，无需 MCP 扫码或云端登录。导入完整场景、自动化及灯组成员是另一条账号授权的云端路径，不能承诺纯 LAN 获取。新家庭零 App、零交互接入仍未验证；本试点历史配置不替代另一家庭验收。</div>
       <article class="panel" style="margin-top:20px" id="configuration-audit"><h3>新增里程碑 · 配置读取与能力核对</h3><p>先结合官方协议、每家的配置和使用者判断，再扩大决策样本。该阶段没有启动新训练；第 2 轮的 64 条／64 步结果保留为历史记录。</p>
         <div class="table-wrap"><table><caption>依据 Pro LAN 协议 v2.22 与官方 yeelight-home 固定版本源码；接口存在不等于已在真实家庭验通。</caption><thead><tr><th scope="col">信息</th><th scope="col">目前可用路径</th><th scope="col">仍缺什么</th></tr></thead><tbody>
@@ -348,6 +349,21 @@
 
     <section id="results" aria-labelledby="results-title">
       <div class="section-head"><h2 id="results-title"><span>04</span>工程跑通，不代表模型练好了</h2><p>质量结论与执行证据分开看。</p></div>
+<article class="panel" style="margin-top:20px" id="round17-progress"><h3>第 17 轮 · 训练已完成，评测恢复中</h3>
+<p class="quality-note"><strong>2026-11-16 21:40（北京时间）进度快照：</strong>1,536 步训练已完成，检查点完好；评分尚未完成，本轮质量结论暂缺。以下旧轮结果继续保留，不代表本轮已通过。</p>
+<p>本轮从同一 Qwen3.5-9B-Base 重新训练一次，采用相同 QLoRA 配方、128 条样本、12 轮、1,536 步。恢复第 14 轮的公共选项排列，仅替换 8 条“保持”样本，增加与动作样本成对的“目标已满足”状态；其余 120 条及开发集保留原始字节，八类数量不变。</p>
+<div class="table-wrap"><table style="min-width:0"><caption>本轮阶段状态；完成工程检查不等于通过模型质量验收。</caption><thead><tr><th>阶段</th><th>已核实的进度</th></tr></thead><tbody>
+<tr><td>输入与加载</td><td>1,640 个输入无截断；真实 DataLoader 检查通过。</td></tr>
+<tr><td>冻结基线</td><td>1,640 次评分已完成，耗时 740.50 秒。</td></tr>
+<tr><td>训练</td><td>唯一一次训练完成，耗时 2,785.43 秒；1,536 次损失均有限，16 个 LoRA B 张量更新；采样位置、选项排列和训练配置与第 14 轮一致。</td></tr>
+<tr><td>首次评分</td><td>停电导致 Spark 重启，最后记录为 638／1,640 次，未保存完整预测；原日志保留，实际中断耗时无法可靠恢复。</td></tr>
+<tr><td>恢复评分</td><td>运行 37.08 秒后触发 512 MiB 的 swap 增长上限，自动停止；尚未完成任何前向评分。</td></tr>
+<tr><td>第二次恢复尝试</td><td>系统资源稳定后再试，46.60 秒再次触发 swap 增长上限，在加载权重时停止，尚未完成前向评分。</td></tr><tr><td>当前状态</td><td>正在检查评测加载阶段的内存峰值，尚未再次启动作业。原资源限制保持不变；其他模型服务继续运行，训练未重跑。</td></tr>
+<tr><td>重载与模拟回放</td><td>等待评分完成。64 个状态的新进程重载及 8,200 次模拟执行检查尚未完成。</td></tr>
+</tbody></table></div>
+<p>停电后已将检查点的 6 个文件与停电前下载的本地副本逐一比对，摘要完全一致；冻结的数据和代码也保持不变。没有更改标签、挑选中间模型或放宽质量门槛。</p>
+<p>其他未完成尝试也保留：准备阶段三次检查失败在训练前修正；首次基线因换行字节变化主动中止，恢复原字节后重新封存；停电后的恢复脚本曾因 Windows 默认文本编码读取失败，明确改为 UTF-8 后才启动。原始错误与样本均在 Git 外。</p>
+<p class="note">这是静态进度快照，不是实时监控。当前尚无第 17 轮完整质量结果；实体控制命令为 0。完整评分、重载和模拟回放结束后，将在同一页面补充结果、失败记录及下一步。</p></article>
 <article class="panel" style="margin-top:20px" id="round16-results"><h3>第 16 轮 · 固定数据和预算，扩大选项排列覆盖</h3>
 <p>训练输入与第 14 轮逐字节一致，仍是 128 条、八类动作、1,536 步、12 轮。从相同底座重新训练一次，只把公共排列种子改为由每条推理输入确定的种子；答案和数据路径不参与生成。原方案覆盖 96 种动作排列，新方案实际覆盖 1,500 种。每条样本仍使用 12 种不同排列，全部八个位置至少出现一次。</p>
 <p class="quality-note"><strong>新测试四种顺序全对 118／150 → 102／150；错误写建议 33 → 94／600。</strong></p>
