@@ -201,12 +201,12 @@
       <a href="#next"><small>05</small>下一步</a>
       <a href="#evidence"><small>06</small>证据与维护</a>
     </nav>
-    <div class="side-foot"><strong>源文件在 Git · 展示在 ShareOne</strong>每轮保留配置、结果与判断。<br>2026-11-17 · 第 23 轮诊断完成</div>
+    <div class="side-foot"><strong>源文件在 Git · 展示在 ShareOne</strong>每轮保留配置、结果与判断。<br>2026-11-17 · 第 24 轮训练进行中</div>
   </aside>
   <main class="main" id="main">
     <div class="topline"><span><span class="mobile-brand">LOCAL DECISIONS / </span>项目记录 · 住宅决策模型</span><div class="top-actions"><span>更新于 2026.11.17</span><button class="print" type="button" id="print-page">打印 / PDF</button></div></div>
     <header class="hero">
-      <div class="eyebrow">Training journal / 023</div>
+      <div class="eyebrow">Training journal / 024</div>
       <h1>住宅决策模型<br>训练、结果与下一步。</h1>
       <div class="statusline"><span class="pill">工程闭环通过</span><span class="pill warn">模型质量待验证</span><span class="pill neutral">实体设备尚未验收</span></div>
       <p class="lead">最终目标：进入一个已安装同类网关的新家庭，在同一局域网内，以尽量少的屋主配合完成接入。当前先用真实的 9B 模型与模拟设备，把训练、保存、重载、决策和动作反馈串起来。</p>
@@ -228,7 +228,7 @@
         <li><span class="step">M05 · 真实环境</span><span class="pill neutral">待准备</span><h3>办公室真实设备验收</h3><p>确认同 LAN 常开承载机及设备清单，再验证受控动作与反馈。</p></li>
         <li><span class="step">M06 · 另一家庭</span><span class="pill neutral">待验收</span><h3>首次接入与日常体验</h3><p>用另一台盒子验证首次接入、家庭权限、人工操作和模型停机回退。</p></li>
       </ol>
-      <div class="update-note"><strong>最新：第 23 轮分轴诊断完成</strong>固定三个模型，全序正确：参考 383、重复组 368、追加组 366／404；继续保留第 21 轮研究候选。<a href="#round23-results">查看错误分布与下一步</a>。</div>
+      <div class="update-note"><strong>最新：第 24 轮训练进行中</strong>只补充数值比较事实，保持样本与训练配方；最新完整结果仍是第 23 轮。<a href="#round24-progress">查看实验设计与预检</a>。</div>
       <div class="update-note"><strong>接入边界也纳入追踪</strong>当前设备发现与日常控制路径是屋主在原有 App 中开启一次“第三方控制”，之后自动局域网连接，无需 MCP 扫码或云端登录。导入完整场景、自动化及灯组成员是另一条账号授权的云端路径，不能承诺纯 LAN 获取。新家庭零 App、零交互接入仍未验证；本试点历史配置不替代另一家庭验收。</div>
       <article class="panel" style="margin-top:20px" id="configuration-audit"><h3>新增里程碑 · 配置读取与能力核对</h3><p>先结合官方协议、每家的配置和使用者判断，再扩大决策样本。该阶段没有启动新训练；第 2 轮的 64 条／64 步结果保留为历史记录。</p>
         <div class="table-wrap"><table><caption>依据 Pro LAN 协议 v2.22 与官方 yeelight-home 固定版本源码；接口存在不等于已在真实家庭验通。</caption><thead><tr><th scope="col">信息</th><th scope="col">目前可用路径</th><th scope="col">仍缺什么</th></tr></thead><tbody>
@@ -262,7 +262,7 @@
 <article class="panel" style="margin-top:20px"><h3>第 18 轮对照 · 原覆盖不变，比较两种追加方式</h3><p>两组从同一底座分别训练，原始 128 条的基础曝光相同；额外 8 个位置分别重复旧题或加入已满足状态。类别数量、候选排列、实际采样位置和预算一致。第 14 轮只作为历史参考；两组训练完成后再统一评分。</p></article>
     <section id="runs" aria-labelledby="runs-title">
       <div class="section-head"><h2 id="runs-title"><span>03</span>每次尝试，都保留结果</h2><p>2026-11-14–16 · 含失败、中止和最终对照</p></div>
-      <div class="toolbar" id="run-toolbar"><div class="filters" role="group" aria-label="筛选实验状态"><button class="filter" type="button" data-filter="all" aria-pressed="true">全部</button><button class="filter" type="button" data-filter="complete" aria-pressed="false">已完成</button><button class="filter" type="button" data-filter="incomplete" aria-pressed="false">中止 / 未通过</button></div><span class="result-count" id="run-count" role="status" aria-live="polite">167 条运行记录</span></div>
+      <div class="toolbar" id="run-toolbar"><div class="filters" role="group" aria-label="筛选实验状态"><button class="filter" type="button" data-filter="all" aria-pressed="true">全部</button><button class="filter" type="button" data-filter="complete" aria-pressed="false">已完成</button><button class="filter" type="button" data-filter="incomplete" aria-pressed="false">中止 / 未通过</button></div><span class="result-count" id="run-count" role="status" aria-live="polite">168 条运行记录</span></div>
       <div class="table-wrap"><table class="run-table"><caption>耗时包含模型加载；R09 合并列出一次无效输入尝试的四阶段耗时。编号为阅读顺序。</caption><thead><tr><th scope="col">编号</th><th scope="col">阶段 / 配置</th><th scope="col">结果</th><th scope="col">耗时</th><th scope="col">观察与后续处理</th></tr></thead><tbody id="run-rows">
         <tr data-state="incomplete"><td>R01</td><td><strong>BF16 首次加载</strong><span class="sub">异步加载</span></td><td><span class="pill stop">主动中止</span></td><td>82.03 s</td><td>主机内存与 swap 出现压力，停止本次作业。<span class="sub">原回执仅记录外部终止；原因来自当时的资源观察及操作记录。</span></td></tr>
         <tr data-state="incomplete"><td>R02</td><td><strong>BF16 顺序加载</strong><span class="sub">提高资源保护门槛</span></td><td><span class="pill stop">自动停止</span></td><td>41.29 s</td><td>触及 16 GiB 主机内存预留门槛。<span class="sub">不降低门槛，改用 NF4 量化配方。</span></td></tr>
@@ -435,6 +435,7 @@
 <tr data-state="incomplete"><td>R166</td><td><strong>第 23 轮 · 参考模型数值诊断</strong></td><td><span class="pill stop">未全部通过</span></td><td>—</td><td>全序正确 217／228；全部正确才算通过。</td></tr>
 <tr data-state="incomplete"><td>R167</td><td><strong>第 23 轮 · 参考模型状态优先级诊断</strong></td><td><span class="pill stop">未全部通过</span></td><td>—</td><td>全序正确 166／176；完整状态表 34／44。</td></tr>
 
+<tr data-state="running"><td>R168</td><td><strong>第 24 轮 · 数值关系表示</strong></td><td><span class="pill warn">进行中</span></td><td>—</td><td>136 条／1,632 步；两种表示预检通过；404 个新状态与全部历史回归已冻结。</td></tr>
 </tbody></table></div>
       <p class="note">CUDA / NF4 前向与反向预检均通过。CPU 依赖下载曾更换镜像后完成，环境准备不计入上面的模型作业耗时。所有原始日志和未完成回执保留在 Git 外。</p>
     </section>
@@ -442,6 +443,7 @@
     <section id="results" aria-labelledby="results-title">
       <div class="section-head"><h2 id="results-title"><span>04</span>工程跑通，不代表模型练好了</h2><p>质量结论与执行证据分开看。</p></div>
 
+<article class="panel" style="margin-top:20px" id="round24-progress"><h3>第 24 轮 · 原始读数＋明确比较关系</h3><p>只改变数值输入表示：保留原始状态，再补充点值、区间下界和上界分别与阈值的比较关系。特征只有低于、等于、高于或未知；只读取原始数值，不读取标签、请求或动作，也不直接计算应执行的动作。</p><p>沿用第 21 轮的 136 条原始训练记录，字节不变；随机种子 17、数据种子 42、学习率 0.0001，q/v 与线性注意力 qkv 的 LoRA 适配，1,632 步／12 轮，固定最终检查点。原表示对照复用第 21 轮固定模型，并在当前环境复现 64 条历史输出；全部新题仍由两个模型分别评分。</p><p>训练前固定 404 个新合成状态，各四种候选顺序，共 1,616 个输入：156 个尺度状态、72 个跨位数边界状态、176 个请求与设备状态组合。另保留 4,600 个去重后的历史输入。新题使用新数值和家庭设定，模板已知；这是合成迁移诊断，不是实际家庭验收。</p><div class="quality-note">训练进行中，尚无本轮模型质量结果。只有新数值题改善、优先级不退步、所有历史套题不下降、原先正确的状态不退步且没有错误写建议，并通过工程检查，才会更换研究候选。实体命令为 0，生产行为不变。</div><p>两种表示各完成 6,216 条训练／推理输入与标签独立检查，合计 439,672 次字段敏感性检查，无截断。新增比较逻辑通过 1,121 个独立数值检查及无关字段不变检查；真实 ms-swift 加载器、模板、标签和回调通过 1,632 次训练顺序预演及六项反例检查。训练上限 5,400 秒，每评分分区上限 900 秒，单 CPU 线程、nice 10，内存与 swap 门槛保持。</p></article>
 <article class="panel" style="margin-top:20px" id="round23-results"><h3>第 23 轮 · 数值尺度与设备优先级诊断</h3><p>固定第 21 轮参考、第 22 轮重复组和追加组的检查点，不更新权重。共 404 个状态、1,616 个输入，逐一改变数值尺度或设备状态：156 个数值缩放状态，72 个跨位数边界状态，176 个在线／离线、状态新旧、灯具开关与请求组合。</p><div class="quality-note">输入、标签、模型身份与分析方法在评分前固定。这是针对已知错误设计的合成诊断，包含 72 个上一轮已经观察过的状态，不作为新的未见验收集，也不据此重新选择检查点。第 21 轮继续作为研究候选。</div><div class="table-wrap primary-results"><table><caption>定向诊断，包含已观察状态；每个状态四种候选顺序全部正确才计入。</caption><thead><tr><th>检查</th><th>第 21 轮</th><th>第 22 轮重复组</th><th>第 22 轮追加组</th></tr></thead><tbody><tr><td>全部状态</td><td>383 / 404</td><td>368 / 404</td><td>366 / 404</td></tr><tr><td>数值缩放</td><td>148 / 156</td><td>140 / 156</td><td>134 / 156</td></tr><tr><td>跨位数边界</td><td>69 / 72</td><td>71 / 72</td><td>69 / 72</td></tr><tr><td>请求与设备状态</td><td>166 / 176</td><td>157 / 176</td><td>163 / 176</td></tr><tr><td>换序动作一致</td><td>394 / 404</td><td>385 / 404</td><td>379 / 404</td></tr><tr><td>错误写建议／1,616 次</td><td>0</td><td>17</td><td>6</td></tr><tr><td>合成批准后错误模拟写入</td><td>0</td><td>0</td><td>6</td></tr><tr><td>置信度 ≥99% 的错误</td><td>53</td><td>99</td><td>86</td></tr></tbody></table></div><p><strong>结论：继续保留第 21 轮研究候选；本轮没有训练新权重。</strong>404 个定向状态中，第 21 轮、重复组、追加组分别有 383、368、366 个在四种候选顺序下全部正确。三个模型均未达到全部状态正确的质量门槛。本轮定位了触发错误的条件，修复方法仍需下一轮对照验证。</p>
 <p><strong>数值问题涉及区间表达与尺度。</strong>第 21 轮在保持差值的四档比较中为 96／96，而等比例放大阈值和读数后为 88／96；错误集中在整个区间低于阈值、部分单点区间。跨位数边界另有 3 个单点区间状态失败。追加数值样本没有稳定消除这些问题，缩放组还引入了 6 次错误开灯建议。</p>
 <p><strong>状态优先级需要按请求类型交叉检查。</strong>第 21 轮的 88 个离线组合全部正确；在线但状态过期时，8 个不支持请求组合仍会跳过刷新；灯已开启但阅读预设尚未满足时，另有 2 个状态误判为保持现状。重复组的状态过期组合退步更明显，产生 17 次错误写建议；追加组则在 4 个离线状态上退步。</p>
