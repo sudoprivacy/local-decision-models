@@ -2,6 +2,8 @@
 
 本地决策模型训练与 AI 协作服务。首批案例是 [物理小问得分率预测](https://s.shareone.vip/s/difficulty-rubric-v2-yang) 和 [私人住宅 AI](https://s.shareone.vip/s/sudo-connect-control-private-ai)，共同遵循[本地训练架构 v0.2](https://s.shareone.vip/s/ben-di-jue-ce-mo-xing-xun-lian-yu-ai-xie-zuo-jia-gou)。
 
+**办公室 Yeelight 接入：从 [这一份 runbook](docs/office-yeelight-runbook.md) 开始。** 克隆仓库即可取得所需的轻量接入代码和依赖锁文件，无需额外 ZIP 或聊天记录。
+
 当前实现一个可执行的 **CPU 参考闭环**：注册数据 → 按完整时间/题组划分 → 独立 worker 做监督训练 → 检查点停止/恢复 → 结构化评测 → 主人批准影子版本 → 回放与回滚。训练使用随机初始化的微型 Qwen3 文本骨干和真实 PEFT LoRA，供验证代码链路。业务训练主线仍是 Qwen3.5-9B 决策层＋LoRA；目标模型、真实业务效果及设备验收见 [验收与后续顺序](docs/acceptance.md)。
 
 ## 本地运行
@@ -59,6 +61,7 @@ uv run pytest
 
 - [架构与接口职责](docs/architecture.md)
 - [验收层级、实际限制与下一步](docs/acceptance.md)
+- [办公室 Yeelight 接入与另一台电脑的 Astra 交接](docs/office-yeelight-runbook.md)
 - [原文版本与固定来源](docs/sources.json)
 
 CI 只有一个离线 CPU 测试作业，不调用付费模型、不运行 live PTY、不下载预训练权重。真实数据、凭据和模型产物放在 Git 外部运行目录；私有仓库可见性不替代数据边界。
