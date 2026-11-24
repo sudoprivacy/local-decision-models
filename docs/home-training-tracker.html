@@ -209,10 +209,10 @@
       <a href="#next"><small>05</small>下一步</a>
       <a href="#evidence"><small>06</small>证据与维护</a>
     </nav>
-    <div class="side-foot"><strong>源文件在 Git · 展示在 ShareOne</strong>每轮保留配置、结果与判断。<br>2026-11-24 · 第 21 轮模型的规则请求诊断</div>
+    <div class="side-foot"><strong>源文件在 Git · 展示在 ShareOne</strong>每轮保留配置、结果与判断。<br>2026-11-25 · 状态新鲜度诊断</div>
   </aside>
   <main class="main" id="main">
-    <div class="topline"><span><span class="mobile-brand">LOCAL DECISIONS / </span>项目记录 · 住宅决策模型</span><div class="top-actions"><span>更新于 2026.11.24</span><button class="print" type="button" id="print-page">打印 / PDF</button></div></div>
+    <div class="topline"><span><span class="mobile-brand">LOCAL DECISIONS / </span>项目记录 · 住宅决策模型</span><div class="top-actions"><span>更新于 2026.11.25</span><button class="print" type="button" id="print-page">打印 / PDF</button></div></div>
     <header class="hero">
       <div class="eyebrow">Training journal / 027</div>
       <h1>住宅决策模型<br>训练、结果与下一步。</h1>
@@ -232,7 +232,7 @@
         <li><span class="step">M05 · 真实环境</span><span class="pill neutral">只读已测</span><h3>办公室真实设备验收</h3><p>办公室电脑重启前已读取网关清单。下一步复测并通过人工切换、恢复指认一盏灯。</p></li>
         <li><span class="step">M06 · 另一家庭</span><span class="pill neutral">待验收</span><h3>首次接入与日常体验</h3><p>用另一台盒子验证首次接入、家庭权限、人工操作和模型停机回退。</p></li>
       </ol>
-      <div class="update-note"><strong>11 月 24 日 · 模型如何回答“以后自动开灯”</strong>R21 在 32 次未来规则请求中给出 0 次即时控灯建议，明确选中“不支持”14 次。<a href="#rule-intent-results">查看定时与传感触发的差异</a>。顶部指标取自第 27 轮，<a href="#round28-results">第 28 轮换序诊断</a>另列。</div>
+      <div class="update-note"><strong>11 月 25 日 · 缺少设备上报信息时，R21 会怎么选？</strong>增加一条明确规则后，64 次未知读数中有 8 次选择刷新，24 次仍建议开关灯。<a href="#freshness-results">查看新鲜、过期、空值和缺字段的对照</a>。上一项是<a href="#rule-intent-results">未来规则请求诊断</a>。顶部指标取自第 27 轮。</div>
       <div class="update-note"><strong>接入边界也纳入追踪</strong>当前设备发现与日常控制路径是屋主在原有 App 中开启一次“第三方控制”，之后自动局域网连接，无需 MCP 扫码或云端登录。导入完整场景、自动化及灯组成员是另一条账号授权的云端路径，不能承诺纯 LAN 获取。新家庭零 App、零交互接入仍未验证；本试点历史配置不替代另一家庭验收。</div>
       <article class="panel" style="margin-top:20px" id="configuration-audit"><h3>新增里程碑 · 配置读取与能力核对</h3><p>先结合官方协议、每家的配置和使用者判断，再扩大决策样本。该阶段没有启动新训练；第 2 轮的 64 条／64 步结果保留为历史记录。</p>
         <div class="table-wrap"><table><caption>依据 Pro LAN 协议 v2.22 与官方 yeelight-home 固定版本源码；接口存在不等于已在真实家庭验通。</caption><thead><tr><th scope="col">信息</th><th scope="col">目前可用路径</th><th scope="col">仍缺什么</th></tr></thead><tbody>
@@ -481,6 +481,20 @@
 
     <section id="results" aria-labelledby="results-title">
       <div class="section-head"><h2 id="results-title"><span>04</span>工程跑通，不代表模型练好了</h2><p>质量结论与执行证据分开看。</p></div>
+      <article class="panel" id="freshness-results">
+        <h3>11 月 25 日 · 灯的读数是否仍然可靠？</h3>
+        <p>R21 训练集的 136 条记录中，126 条明确写了状态新鲜，10 条明确写了状态过期，空值和省略均为 0 条。办公室清单能提供网关读取时间，但设备上报时间仍待核实。</p>
+        <p>本轮固定 R21 和八项候选，在一个合成房间组合开关请求、灯当前的电源状态以及四种新鲜度。32 个不同输入各换 4 种候选顺序，分别使用原说明和增加一句新鲜度规则的说明。预先约定在线设备读数过期、空值或缺字段时应先刷新。读数明确新鲜时，应依请求开灯、关灯或保持已满足状态。</p>
+        <div class="table-wrap"><table><caption>每格 32 次呈现，来自 8 个输入各换 4 种顺序。“正确”按评分前约定的动作统计。</caption><thead><tr><th scope="col">读数</th><th scope="col">原说明正确数</th><th scope="col">加规则后正确数</th><th scope="col">即时控灯建议（原 → 加规则）</th></tr></thead><tbody>
+          <tr><td>明确新鲜</td><td>32/32</td><td>32/32</td><td>16 → 16（均符合请求）</td></tr>
+          <tr><td>明确过期</td><td>32/32</td><td>32/32</td><td>0 → 0</td></tr>
+          <tr><td>空值</td><td>0/32</td><td>8/32</td><td>16 → 8</td></tr>
+          <tr><td>缺字段</td><td>0/32</td><td>0/32</td><td>16 → 16</td></tr>
+        </tbody></table></div>
+        <p>增加说明后，64 次未知读数中仍有 24 次直接建议开关灯，另有 32 次选择保持。各组换序后的首选均一致。本次样本的主要问题集中在新鲜度取值；跨家庭表现仍待验证。</p>
+        <p><strong>工程与现场。</strong>264 个输入均通过检查，8 次参考评分逐值复现。DGX Spark 评分耗时 171.36 秒，两阶段均完成，模型权重未变。训练步数、真实请求和实体命令均为 0。准备下一轮时更正了数据回执里对照组取值的文字说明，数据摘要一致。</p>
+        <p><strong>下一轮后训练数据。</strong>对照组和实验组都保留原来的 136 条记录，各加 32 条合成记录。仅改变其中 16 条的新鲜度表示，对照组写明过期，实验组给空值或省略字段。两组的正确动作与候选顺序逐条相同。另留两个合成家庭、32 个状态共 128 次呈现。数据已生成并在 CPU 上核对，权重训练待跑。</p>
+      </article>
       <article class="panel" id="rule-intent-results">
         <h3>11 月 24 日 · R21 能区分立即开灯与创建未来规则吗？</h3>
         <p>固定第 21 轮研究检查点和八项候选。在同一个合成房间，灯关闭、状态新鲜、没有已建规则。每种意图各写 8 条新表述，每条换 4 种候选顺序。评分前约定，立即请求应选开灯；定时或感应规则请求应选“不支持”，因为候选中没有创建规则的操作。</p>
