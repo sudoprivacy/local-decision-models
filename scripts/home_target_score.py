@@ -12,14 +12,7 @@ def digest(path):
         return hashlib.file_digest(source, "sha256").hexdigest()
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=Path, required=True)
-    parser.add_argument("--bundle", type=Path, required=True)
-    parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--adapter", type=Path)
-    parser.add_argument("--limit", type=int, default=0)
-    args = parser.parse_args()
+def load_engine(model, adapter):
     import torch
 
     torch.set_num_threads(1)
@@ -28,20 +21,14 @@ def main():
     total = torch.cuda.get_device_properties(0).total_memory
     torch.cuda.set_per_process_memory_fraction(min(1.0, 25 * 2**30 / total))
     import home_swift_plugin
-    from swift.infer_engine import RequestConfig, TransformersEngine
+    from swift.infer_engine import TransformersEngine
     from transformers import BitsAndBytesConfig
 
-    manifest = json.loads((args.bundle / "bundle.json").read_text())
-    if digest(args.bundle / "records.json") != manifest["records_sha256"]:
-        raise RuntimeError("bundle_integrity_failed")
-    rows = json.loads((args.bundle / "records.json").read_text())
-    if args.limit:
-        rows = rows[: args.limit]
     engine = TransformersEngine(
-        str(args.model),
+        str(model),
         model_type=home_swift_plugin.MODEL_TYPE,
         task_type="decision",
-        adapters=[str(args.adapter)] if args.adapter else None,
+        adapters=[str(adapter)] if adapter else None,
         torch_dtype=torch.bfloat16,
         attn_impl="sdpa",
         device_map={"": 0},
@@ -55,22 +42,49 @@ def main():
         ),
     )
     engine.template.max_length = 2048
+    return engine
+
+
+def score_options(engine, state, question):
+    import home_swift_plugin
+    import torch
+    from swift.infer_engine import RequestConfig
+
+    request = home_swift_plugin.home_decision_request(state, question)
+    torch.cuda.synchronize()
+    started = time.perf_counter()
+    response = engine.infer([request], RequestConfig(stream=False), use_tqdm=False)[0]
+    torch.cuda.synchronize()
+    elapsed = (time.perf_counter() - started) * 1000
+    if isinstance(response, Exception):
+        raise response
+    content = response.choices[0].message.content
+    if isinstance(content, str):
+        content = json.loads(content)
+    return {"probabilities": content[0]["probs"], "latency_ms": elapsed}
+
+
+def main():
+    import torch
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", type=Path, required=True)
+    parser.add_argument("--bundle", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--adapter", type=Path)
+    parser.add_argument("--limit", type=int, default=0)
+    args = parser.parse_args()
+    manifest = json.loads((args.bundle / "bundle.json").read_text())
+    if digest(args.bundle / "records.json") != manifest["records_sha256"]:
+        raise RuntimeError("bundle_integrity_failed")
+    rows = json.loads((args.bundle / "records.json").read_text())
+    if args.limit:
+        rows = rows[: args.limit]
+    engine = load_engine(args.model, args.adapter)
     results = []
     for row in rows:
         state, question = row["model_input"]["state"], row["model_input"]["questions"][0]
-        request = home_swift_plugin.home_decision_request(state, question)
-        torch.cuda.synchronize()
-        started = time.perf_counter()
-        response = engine.infer([request], RequestConfig(stream=False), use_tqdm=False)[0]
-        torch.cuda.synchronize()
-        elapsed = (time.perf_counter() - started) * 1000
-        if isinstance(response, Exception):
-            raise response
-        content = response.choices[0].message.content
-        if isinstance(content, str):
-            content = json.loads(content)
-        probabilities = content[0]["probs"]
-        results.append({"id": row["id"], "probabilities": probabilities, "latency_ms": elapsed})
+        results.append({"id": row["id"], **score_options(engine, state, question)})
         print(json.dumps({"scored": len(results), "total": len(rows)}), flush=True)
     adapter_files = {}
     if args.adapter:

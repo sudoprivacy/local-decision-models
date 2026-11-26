@@ -209,10 +209,10 @@
       <a href="#next"><small>05</small>下一步</a>
       <a href="#evidence"><small>06</small>证据与维护</a>
     </nav>
-    <div class="side-foot"><strong>源文件在 Git · 展示在 ShareOne</strong>每轮保留配置、结果与判断。<br>2026-11-25 · 状态新鲜度诊断</div>
+    <div class="side-foot"><strong>源文件在 Git · 展示在 ShareOne</strong>每轮保留配置、结果与判断。<br>2026-11-26 · 单灯读取后再决策</div>
   </aside>
   <main class="main" id="main">
-    <div class="topline"><span><span class="mobile-brand">LOCAL DECISIONS / </span>项目记录 · 住宅决策模型</span><div class="top-actions"><span>更新于 2026.11.25</span><button class="print" type="button" id="print-page">打印 / PDF</button></div></div>
+    <div class="topline"><span><span class="mobile-brand">LOCAL DECISIONS / </span>项目记录 · 住宅决策模型</span><div class="top-actions"><span>更新于 2026.11.26</span><button class="print" type="button" id="print-page">打印 / PDF</button></div></div>
     <header class="hero">
       <div class="eyebrow">Training journal / 027</div>
       <h1>住宅决策模型<br>训练、结果与下一步。</h1>
@@ -232,7 +232,7 @@
         <li><span class="step">M05 · 真实环境</span><span class="pill neutral">只读已测</span><h3>办公室真实设备验收</h3><p>办公室电脑重启前已读取网关清单。下一步复测并通过人工切换、恢复指认一盏灯。</p></li>
         <li><span class="step">M06 · 另一家庭</span><span class="pill neutral">待验收</span><h3>首次接入与日常体验</h3><p>用另一台盒子验证首次接入、家庭权限、人工操作和模型停机回退。</p></li>
       </ol>
-      <div class="update-note"><strong>11 月 25 日 · 状态新鲜度配对训练已启动</strong>R21 增加规则说明后，64 次未知读数中仅 8 次选择刷新。现在用同预算的两组数据比较“明确过期”和“空值或缺字段”的学习效果。<a href="#freshness-results">查看诊断与训练进度</a>。顶部指标取自第 27 轮。</div>
+      <div class="update-note"><strong>11 月 26 日 · 读完灯的状态，模型再决定一次</strong>新鲜度训练实验组在 64 次未知读数中全部选择刷新。真实检查点已接上模拟灯，同一条开灯请求在读回不同状态后给出不同建议。<a href="#refresh-loop-results">查看两步演示和现场验收安排</a>。顶部指标取自第 27 轮。</div>
       <div class="update-note"><strong>接入边界也纳入追踪</strong>当前设备发现与日常控制路径是屋主在原有 App 中开启一次“第三方控制”，之后自动局域网连接，无需 MCP 扫码或云端登录。导入完整场景、自动化及灯组成员是另一条账号授权的云端路径，不能承诺纯 LAN 获取。新家庭零 App、零交互接入仍未验证；本试点历史配置不替代另一家庭验收。</div>
       <article class="panel" style="margin-top:20px" id="configuration-audit"><h3>新增里程碑 · 配置读取与能力核对</h3><p>先结合官方协议、每家的配置和使用者判断，再扩大决策样本。该阶段没有启动新训练；第 2 轮的 64 条／64 步结果保留为历史记录。</p>
         <div class="table-wrap"><table><caption>依据 Pro LAN 协议 v2.22 与官方 yeelight-home 固定版本源码；接口存在不等于已在真实家庭验通。</caption><thead><tr><th scope="col">信息</th><th scope="col">目前可用路径</th><th scope="col">仍缺什么</th></tr></thead><tbody>
@@ -481,6 +481,19 @@
 
     <section id="results" aria-labelledby="results-title">
       <div class="section-head"><h2 id="results-title"><span>04</span>工程跑通，不代表模型练好了</h2><p>质量结论与执行证据分开看。</p></div>
+      <article class="panel" id="refresh-loop-results">
+        <h3>11 月 26 日 · 单灯请求读回后再决策</h3>
+        <p>新鲜度配对后训练两组各完成 2,016 步。在两个留出合成家庭，读数新鲜或过期的 64 次呈现里，R21、对照组和实验组均为 64/64。对于空值或缺字段，R21 与对照组正确刷新 0/64，各产生 32 次即时写入建议；实验组正确刷新 64/64，写入建议为 0。此项专项结果待历史回归与现场验证。<a href="#freshness-results">训练设计与运行记录</a></p>
+        <p>在 DGX 上分别加载实验组和保留的 R21，对同一条合成开灯请求运行四种模拟读回。起始快照的灯为关闭，新鲜度为空。程序保存模型原始首选，通过回环 TCP 读取同一盏模拟灯，仅在本例已知读数代表模拟器当前状态时，再把原请求与更新后的电源、亮度和色温送入同一模型。</p>
+        <div class="table-wrap"><table><caption>实验组第一次均选刷新。以下结果来自实际模型推理和模拟网关读取。</caption><thead><tr><th scope="col">读回情形</th><th scope="col">推理次数</th><th scope="col">交给人核对的结果</th></tr></thead><tbody>
+          <tr><td>已开</td><td>2</td><td>保持现状</td></tr>
+          <tr><td>仍关</td><td>2</td><td>建议开灯</td></tr>
+          <tr><td>读数仅来自缓存</td><td>1</td><td>停止，待人工核实</td></tr>
+          <tr><td>灯已离线</td><td>1</td><td>停止，待人工核实</td></tr>
+        </tbody></table></div>
+        <p>R21 在同一初始输入上首选开灯，四次均由程序的新鲜度检查触发读取，最终建议与上表一致。它的首轮概率逐值复现原有评分记录。两个检查点共 12 次前向、8 次模拟读取，模拟与实体写入各 0 次。此演示覆盖一个房间的一条请求。</p>
+        <p><strong>下一次办公室单灯 demo。</strong>先由现场人员指认目标，并核实设备读数来源和时效，再用同一请求验证已开、仍关和无法核实三种结果，由人核对建议。获得具体动作确认后，再单独验收实体执行、读回与恢复。</p>
+      </article>
       <article class="panel" id="freshness-results">
         <h3>11 月 25 日 · 灯的读数是否仍然可靠？</h3>
         <p>R21 训练集的 136 条记录中，126 条明确写了状态新鲜，10 条明确写了状态过期，空值和省略均为 0 条。办公室清单能提供网关读取时间，但设备上报时间仍待核实。</p>
