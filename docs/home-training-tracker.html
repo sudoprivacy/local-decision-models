@@ -209,18 +209,18 @@
       <a href="#next"><small>05</small>下一步</a>
       <a href="#evidence"><small>06</small>证据与维护</a>
     </nav>
-    <div class="side-foot"><strong>源文件在 Git · 展示在 ShareOne</strong>每轮保留配置、结果与判断。<br>2026-11-26 · 单灯读取后再决策</div>
+    <div class="side-foot"><strong>源文件在 Git · 展示在 ShareOne</strong>每轮保留配置、结果与判断。<br>2026-11-28 · 办公室单灯实测</div>
   </aside>
   <main class="main" id="main">
-    <div class="topline"><span><span class="mobile-brand">LOCAL DECISIONS / </span>项目记录 · 住宅决策模型</span><div class="top-actions"><span>更新于 2026.11.26</span><button class="print" type="button" id="print-page">打印 / PDF</button></div></div>
+    <div class="topline"><span><span class="mobile-brand">LOCAL DECISIONS / </span>项目记录 · 住宅决策模型</span><div class="top-actions"><span>更新于 2026.11.28</span><button class="print" type="button" id="print-page">打印 / PDF</button></div></div>
     <header class="hero">
       <div class="eyebrow">Training journal / 027</div>
       <h1>住宅决策模型<br>训练、结果与下一步。</h1>
-      <div class="statusline"><span class="pill">工程闭环通过</span><span class="pill warn">模型质量待验证</span><span class="pill neutral">实体设备尚未验收</span></div>
+      <div class="statusline"><span class="pill">工程闭环通过</span><span class="pill warn">模型质量待验证</span><span class="pill neutral">办公室单灯开关已验证</span></div>
       <p class="lead">最终目标：进入一个已安装同类网关的新家庭，在同一局域网内，以尽量少的屋主配合完成接入。当前先用真实的 9B 模型与模拟设备，把训练、保存、重载、决策和动作反馈串起来。</p>
     </header>
 
-    <div class="metrics" aria-label="第 27 轮独立诊断续评"><div class="metric"><strong>496<span>/ 528</span></strong><b>重复旧样本组</b><small>新合成状态 · 四种顺序全对</small></div><div class="metric"><strong>528<span>/ 528</span></strong><b>新增覆盖组</b><small>相同标签数量、采样与训练预算</small></div><div class="metric"><strong>1</strong><b>相对第 21 轮历史退步</b><small>逐个状态检查全部已提供顺序</small></div><div class="metric"><strong>0</strong><b>实体控制命令</b><small>工程、质量、实机证据分别报告</small></div></div>
+    <div class="metrics" aria-label="第 27 轮模型诊断与办公室单灯试验"><div class="metric"><strong>496<span>/ 528</span></strong><b>重复旧样本组</b><small>新合成状态 · 四种顺序全对</small></div><div class="metric"><strong>528<span>/ 528</span></strong><b>新增覆盖组</b><small>相同标签数量、采样与训练预算</small></div><div class="metric"><strong>1</strong><b>相对第 21 轮历史退步</b><small>逐个状态检查全部已提供顺序</small></div><div class="metric"><strong>2</strong><b>办公室单灯试验</b><small>人工指定，开灯与恢复各 1 条命令</small></div></div>
 
     <section id="overview" aria-labelledby="overview-title">
       <div class="section-head"><h2 id="overview-title"><span>01</span>现在走到哪一步</h2><p>以验收证据推进，不以训练步数代替完成度。</p></div>
@@ -229,10 +229,11 @@
         <li><span class="step">M02 · 目标模型链路</span><span class="pill">已验证</span><h3>9B 训练 → 重载 → 回放</h3><p>Spark 上 QLoRA 更新成功；检查点与决策头保存并重载。</p></li>
         <li><span class="step">M03 · 研究候选</span><span class="pill">合成诊断候选</span><h3>第 21 轮</h3><p>第 27 轮仅补齐诊断证据，原流程失败保留，因此本次不升级候选；尚未完成真实家庭验收。</p></li>
         <li class="current"><span class="step">M04 · 开关与换序</span><span class="pill warn">固定模型诊断完成</span><h3>先定位剩余错误</h3><p>32 个新状态 × 16 序；已知错误另列，未训练或升级模型。</p></li>
-        <li><span class="step">M05 · 真实环境</span><span class="pill neutral">只读已测</span><h3>办公室真实设备验收</h3><p>办公室电脑重启前已读取网关清单。下一步复测并通过人工切换、恢复指认一盏灯。</p></li>
+        <li><span class="step">M05 · 真实环境</span><span class="pill">单灯已测</span><h3>办公室真实设备验收</h3><p>现场目视确认只有一盏亮起。恢复后，四盏灯的电源、亮度、色温及在线状态均与初始快照一致。</p></li>
         <li><span class="step">M06 · 另一家庭</span><span class="pill neutral">待验收</span><h3>首次接入与日常体验</h3><p>用另一台盒子验证首次接入、家庭权限、人工操作和模型停机回退。</p></li>
       </ol>
-      <div class="update-note"><strong>11 月 26 日 · 读完灯的状态，模型再决定一次</strong>新鲜度训练实验组在 64 次未知读数中全部选择刷新。真实检查点已接上模拟灯，同一条开灯请求在读回不同状态后给出不同建议。<a href="#refresh-loop-results">查看两步演示和现场验收安排</a>。顶部指标取自第 27 轮。</div>
+      <div class="update-note" id="office-lamp-trial"><strong>11 月 28 日 · 办公室单灯开灯与恢复</strong>按用户指令开灯一次，网关确认，四盏灯中只有一盏从关变开，现场同事目视确认只有一盏亮。恢复关灯时终端等待超时，随后另起只读连接核实了网关确认、试验恢复记录和四灯初始状态。全程共两次写入，模型未参与。下一步用已核实的设备做只读模型演示，检查读数来源及其时效。</div>
+      <div class="update-note"><strong>11 月 26 日 · 读完灯的状态，模型再决定一次</strong>新鲜度训练实验组在 64 次未知读数中全部选择刷新。真实检查点已接上模拟灯，同一条开灯请求在读回不同状态后给出不同建议。<a href="#refresh-loop-results">查看两步演示和现场验收安排</a>。前三项指标取自第 27 轮。</div>
       <div class="update-note"><strong>接入边界也纳入追踪</strong>当前设备发现与日常控制路径是屋主在原有 App 中开启一次“第三方控制”，之后自动局域网连接，无需 MCP 扫码或云端登录。导入完整场景、自动化及灯组成员是另一条账号授权的云端路径，不能承诺纯 LAN 获取。新家庭零 App、零交互接入仍未验证；本试点历史配置不替代另一家庭验收。</div>
       <article class="panel" style="margin-top:20px" id="configuration-audit"><h3>新增里程碑 · 配置读取与能力核对</h3><p>先结合官方协议、每家的配置和使用者判断，再扩大决策样本。该阶段没有启动新训练；第 2 轮的 64 条／64 步结果保留为历史记录。</p>
         <div class="table-wrap"><table><caption>依据 Pro LAN 协议 v2.22 与官方 yeelight-home 固定版本源码；接口存在不等于已在真实家庭验通。</caption><thead><tr><th scope="col">信息</th><th scope="col">目前可用路径</th><th scope="col">仍缺什么</th></tr></thead><tbody>
